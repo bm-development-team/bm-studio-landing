@@ -16,19 +16,45 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'BM Studio',
-  url: 'https://example.com',
-  description: t.meta.description,
-  contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'sales',
-    email: 'hello@example.com',
-    areaServed: 'KZ',
-    availableLanguage: ['ru', 'kk', 'en'],
-  },
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${siteUrl}/#organization`,
+      name: 'BM Studio',
+      url: `${siteUrl}/`,
+      logo: `${siteUrl}/apple-touch-icon.png`,
+      image: `${siteUrl}/og-default.png`,
+      description: t.meta.description,
+      email: t.contact.email,
+      telephone: t.contact.phone,
+      areaServed: 'KZ',
+      sameAs: [
+        'https://t.me/bmstudio',
+        'https://wa.me/77777262620',
+        'https://instagram.com/bmstudio',
+      ],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'sales',
+        email: t.contact.email,
+        telephone: t.contact.phone,
+        areaServed: 'KZ',
+        availableLanguage: ['ru', 'kk', 'en'],
+      },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${siteUrl}/#website`,
+      url: `${siteUrl}/`,
+      name: 'BM Studio',
+      description: t.meta.description,
+      inLanguage: lang,
+      publisher: { '@id': `${siteUrl}/#organization` },
+    },
+  ],
 };
 ---
 

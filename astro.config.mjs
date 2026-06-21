@@ -4,8 +4,9 @@ import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
 
-// TODO: replace with your real domain — used for sitemap, canonical, og:url
-const SITE = "https://example.com";
+// Real domain — used for sitemap, canonical, og:url.
+// Override per-environment with the SITE_URL env var (set it in Vercel → Settings → Environment Variables).
+const SITE = process.env.SITE_URL || "https://bm-studio-landing.vercel.app";
 
 // https://astro.build/config
 export default defineConfig({

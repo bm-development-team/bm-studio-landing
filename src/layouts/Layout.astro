@@ -40,6 +40,11 @@ const defaultHref = new URL(
     localizePath(basePath, defaultLang),
     Astro.site,
 ).toString();
+
+const altLocales = allLangs
+    .filter((code) => code !== lang)
+    .map((code) => ogLocaleMap[code]);
+const siteName = "BM Studio";
 ---
 
 <!doctype html>
@@ -58,6 +63,11 @@ const defaultHref = new URL(
         <link rel="canonical" href={canonicalURL} />
         <meta name="generator" content={Astro.generator} />
 
+        <!-- crawler directives -->
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="googlebot" content="index, follow" />
+        <meta name="author" content="BM Studio" />
+
         <!-- hreflang alternates -->
         {
             alternates.map((alt) => (
@@ -68,17 +78,26 @@ const defaultHref = new URL(
 
         <!-- Open Graph -->
         <meta property="og:type" content="website" />
+        <meta property="og:site_name" content={siteName} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={canonicalURL} />
         <meta property="og:image" content={imageURL} />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={siteName} />
         <meta property="og:locale" content={ogLocaleMap[lang]} />
+        {altLocales.map((loc) => (
+            <meta property="og:locale:alternate" content={loc} />
+        ))}
 
         <!-- Twitter -->
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={imageURL} />
+        <meta name="twitter:image:alt" content={siteName} />
 
         {
             jsonLd && (
