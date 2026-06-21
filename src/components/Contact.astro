@@ -1,0 +1,342 @@
+---
+import { type Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const c = t.contact;
+
+// minimal line icons (lucide-style) keyed by purpose
+const dirIcons: Record<string, string> = {
+  web: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18"/>',
+  mobile: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+  uxui: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+  identity: '<circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 1 0 0 20 2.5 2.5 0 0 0 2-4 2.5 2.5 0 0 1 2-4h1a3 3 0 0 0 3-3 8 8 0 0 0-8-7z"/>',
+};
+const tagIcon = '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.2"/>';
+const clockIcon = '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>';
+const typeIcon = '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>';
+
+const cardBase =
+  'group flex items-center justify-between gap-3 rounded-[16px] border-[1.5px] border-[#ebebeb] bg-[#fafafa] p-[17px] text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-[0_10px_24px_-16px_rgba(232,69,27,0.5)] aria-pressed:border-primary aria-pressed:bg-[#fff5f2]';
+const rowBase =
+  'group flex w-full items-center justify-between gap-3 rounded-[16px] border-[1.5px] border-[#ebebeb] bg-[#fafafa] px-[18px] py-[15px] text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-[0_10px_24px_-16px_rgba(232,69,27,0.5)] aria-pressed:border-primary aria-pressed:bg-[#fff5f2]';
+const radioDot =
+  'grid size-5 shrink-0 place-items-center rounded-full border-[1.5px] border-[#d0d0d0] transition group-aria-pressed:border-primary group-aria-pressed:bg-primary';
+const check =
+  '<svg class="size-2.5 scale-0 text-white transition-transform group-aria-pressed:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+const inputClass =
+  'w-full rounded-[14px] border-[1.5px] border-[#ebebeb] bg-[#fafafa] px-4 py-3 text-[14px] text-[#111] placeholder:text-[#bbb] transition focus:border-primary focus:bg-white focus:outline-none';
+---
+
+<section id="contact" class="mx-auto max-w-[1400px] scroll-mt-24 px-6 py-20 md:px-[53px]">
+  <div class="grid gap-12 lg:grid-cols-[389px_1fr] lg:gap-16">
+    <!-- LEFT: heading + step nav + contacts -->
+    <div data-reveal>
+      <h2 class="text-[40px] font-bold leading-[1.05] tracking-[-1px] text-fg sm:text-[52px]">{c.heading}</h2>
+      <div class="mt-4 h-0.5 w-full max-w-[389px] bg-primary"></div>
+      <p class="mt-6 max-w-[320px] text-[15px] leading-relaxed text-[#888]">{c.description}</p>
+
+      <ol class="mt-9 flex flex-col gap-3" data-nav>
+        {c.stepNav.map((label, i) => (
+          <li class="flex items-center gap-3" data-nav-item>
+            <span
+              data-nav-circle
+              class:list={[
+                'grid size-6 shrink-0 place-items-center rounded-full border-[1.5px] text-[11px] font-semibold transition',
+                i === 0 ? 'border-primary bg-primary text-white' : 'border-[#d8d8d8] text-[#bbb]',
+              ]}
+            >{i + 1}</span>
+            <span
+              data-nav-label
+              class:list={['text-[14px] transition', i === 0 ? 'font-semibold text-[#111]' : 'text-[#bbb]']}
+            >{label}</span>
+          </li>
+        ))}
+      </ol>
+
+      <div class="mt-9 space-y-1.5 border-t border-[#f0f0f0] pt-5 text-[14px] text-[#555]">
+        <a href={`tel:${c.phone.replace(/[^+\d]/g, '')}`} class="block transition hover:text-primary">{c.phone}</a>
+        <a href={`mailto:${c.email}`} class="block transition hover:text-primary">{c.email}</a>
+      </div>
+    </div>
+
+    <!-- RIGHT: wizard card -->
+    <form
+      data-reveal
+      data-brief
+      style="--reveal-delay: 120ms"
+      method="POST"
+      action="https://formspree.io/f/YOUR_FORM_ID"
+      class="flex h-fit flex-col overflow-hidden rounded-[30px] border border-border bg-white"
+    >
+      <!-- header: step counter + progress dots -->
+      <div class="flex items-center justify-between border-b border-[#f0f0f0] px-5 py-5 sm:px-8">
+        <span class="text-[13px] text-[#aaa]">
+          {c.stepWord} <span data-step-num>1</span> {c.ofWord} 5
+        </span>
+        <div class="flex items-center gap-[5px]" data-dots>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <span
+              data-dot
+              class:list={[
+                'rounded-full transition-all',
+                i === 0 ? 'h-[5px] w-[22px] bg-primary' : 'size-[5px] bg-[#e0e0e0]',
+              ]}
+            ></span>
+          ))}
+        </div>
+      </div>
+
+      <!-- body -->
+      <div class="px-5 pb-2 pt-7 sm:px-8">
+        <!-- STEP 1: direction -->
+        <div data-step data-key="direction" data-num="0">
+          <p class="text-[12px] font-medium tracking-[0.6px] text-[#bbb]">{c.q1.num} / {c.q1.step}</p>
+          <h3 class="mt-1 text-[24px] font-bold text-[#111]">{c.q1.title}</h3>
+          <p class="mt-1 text-[13px] text-[#bbb]">{c.q1.sub}</p>
+          <div class="mt-5 grid gap-3 sm:grid-cols-2">
+            {c.q1.options.map((o) => (
+              <button type="button" data-opt data-value={o.value} data-label={o.label} aria-pressed="false" class={cardBase}>
+                <span class="flex flex-col gap-[3px]">
+                  <span class="flex items-center gap-2">
+                    <svg class="size-[15px] shrink-0 text-[#888] transition group-aria-pressed:text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={dirIcons[o.value]} />
+                    <span class="text-[13px] font-semibold text-[#111]">{o.label}</span>
+                  </span>
+                  {o.sub && <span class="pl-[23px] text-[12px] font-medium text-[#bbb]">{o.sub}</span>}
+                </span>
+                <span class={radioDot} set:html={check} />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- STEP 2: project type (branches by direction) -->
+        <div data-step data-key="projectType" data-num="1" class="hidden">
+          <p class="text-[12px] font-medium tracking-[0.6px] text-[#bbb]">{c.q2.num} / {c.q2.step}</p>
+          <h3 class="mt-1 text-[24px] font-bold text-[#111]">{c.q2.title}</h3>
+          <p class="mt-1 text-[13px] text-[#bbb]">{c.q2.sub}</p>
+          {Object.entries(c.q2.byDirection).map(([dir, opts]) => (
+            <div data-type-group data-dir={dir} class="mt-5 hidden grid-cols-1 gap-3 sm:grid-cols-2">
+              {opts.map((o) => (
+                <button type="button" data-opt data-value={o.value} data-label={o.label} aria-pressed="false" class={cardBase}>
+                  <span class="flex flex-col gap-[3px]">
+                    <span class="flex items-center gap-2">
+                      <svg class="size-[15px] shrink-0 text-[#888] transition group-aria-pressed:text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={typeIcon} />
+                      <span class="text-[13px] font-semibold text-[#111]">{o.label}</span>
+                    </span>
+                    {o.sub && <span class="pl-[23px] text-[12px] font-medium text-[#bbb]">{o.sub}</span>}
+                  </span>
+                  <span class={radioDot} set:html={check} />
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <!-- STEP 3: budget -->
+        <div data-step data-key="budget" data-num="2" class="hidden">
+          <p class="text-[12px] font-medium tracking-[0.6px] text-[#bbb]">{c.q3.num} / {c.q3.step}</p>
+          <h3 class="mt-1 text-[24px] font-bold text-[#111]">{c.q3.title}</h3>
+          <p class="mt-1 text-[13px] text-[#bbb]">{c.q3.sub}</p>
+          <div class="mt-5 flex flex-col gap-3">
+            {c.q3.options.map((o) => (
+              <button type="button" data-opt data-value={o.value} data-label={o.label} aria-pressed="false" class={rowBase}>
+                <span class="flex items-center gap-3">
+                  <svg class="size-[15px] shrink-0 text-[#888] transition group-aria-pressed:text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={tagIcon} />
+                  <span class="flex flex-col">
+                    <span class="text-[13px] font-semibold text-[#111]">{o.label}</span>
+                    {o.sub && <span class="text-[12px] text-[#bbb]">{o.sub}</span>}
+                  </span>
+                </span>
+                <span class={radioDot} set:html={check} />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- STEP 4: timeline -->
+        <div data-step data-key="timeline" data-num="3" class="hidden">
+          <p class="text-[12px] font-medium tracking-[0.6px] text-[#bbb]">{c.q4.num} / {c.q4.step}</p>
+          <h3 class="mt-1 text-[24px] font-bold text-[#111]">{c.q4.title}</h3>
+          <p class="mt-1 text-[13px] text-[#bbb]">{c.q4.sub}</p>
+          <div class="mt-5 flex flex-col gap-3">
+            {c.q4.options.map((o) => (
+              <button type="button" data-opt data-value={o.value} data-label={o.label} aria-pressed="false" class={rowBase}>
+                <span class="flex items-center gap-3">
+                  <svg class="size-[15px] shrink-0 text-[#888] transition group-aria-pressed:text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={clockIcon} />
+                  <span class="text-[13px] font-semibold text-[#111]">{o.label}</span>
+                </span>
+                <span class={radioDot} set:html={check} />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- STEP 5: contacts -->
+        <div data-step data-key="contacts" data-num="4" class="hidden">
+          <p class="text-[12px] font-medium tracking-[0.6px] text-[#bbb]">{c.q5.num} / {c.q5.step}</p>
+          <h3 class="mt-1 text-[24px] font-bold text-[#111]">{c.q5.title}</h3>
+          <p class="mt-1 text-[13px] text-[#bbb]">{c.q5.sub}</p>
+          <div data-chips class="mt-4 flex flex-wrap gap-2"></div>
+          <div class="mt-5 space-y-4">
+            <label class="block">
+              <span class="text-[13px] text-[#555]">{c.q5.nameLabel}</span>
+              <input type="text" name="name" required data-field placeholder={c.q5.namePlaceholder} class={`mt-1.5 ${inputClass}`} />
+            </label>
+            <label class="block">
+              <span class="text-[13px] text-[#555]">{c.q5.contactLabel}</span>
+              <input type="text" name="contact" required data-field placeholder={c.q5.contactPlaceholder} class={`mt-1.5 ${inputClass}`} />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- hidden inputs for submission -->
+      <input type="hidden" name="direction" data-in="direction" />
+      <input type="hidden" name="project_type" data-in="projectType" />
+      <input type="hidden" name="budget" data-in="budget" />
+      <input type="hidden" name="timeline" data-in="timeline" />
+
+      <!-- footer: back + action -->
+      <div class="flex items-center justify-between border-t border-[#f0f0f0] px-5 py-5 sm:px-8">
+        <button type="button" data-back class="invisible inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[14px] text-[#777] transition hover:text-[#111]">
+          <span aria-hidden="true">←</span> {c.back}
+        </button>
+        <button type="button" data-action class="btn-shine group/btn inline-flex h-[44px] items-center gap-2 rounded-full bg-primary px-7 text-[14px] font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/30 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none">
+          <span data-action-label>{c.next}</span>
+          <span data-action-arrow class="transition-transform duration-300 group-hover/btn:translate-x-1" aria-hidden="true">→</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script is:inline define:vars={{ nextLabel: c.next, submitLabel: c.submit }}>
+  document.querySelectorAll('[data-brief]').forEach((form) => {
+    const steps = [...form.querySelectorAll('[data-step]')];
+    const total = steps.length;
+    const navItems = [...form.closest('section').querySelectorAll('[data-nav-item]')];
+    const dots = [...form.querySelectorAll('[data-dot]')];
+    const stepNum = form.querySelector('[data-step-num]');
+    const backBtn = form.querySelector('[data-back]');
+    const actionBtn = form.querySelector('[data-action]');
+    const actionLabel = form.querySelector('[data-action-label]');
+    const actionArrow = form.querySelector('[data-action-arrow]');
+    const chipsBox = form.querySelector('[data-chips]');
+    const hidden = {
+      direction: form.querySelector('[data-in="direction"]'),
+      projectType: form.querySelector('[data-in="projectType"]'),
+      budget: form.querySelector('[data-in="budget"]'),
+      timeline: form.querySelector('[data-in="timeline"]'),
+    };
+    const state = { direction: '', projectType: '', budget: '', timeline: '' };
+    const labels = {};
+    let cur = 0;
+
+    const dotOn = (el, active) => {
+      el.classList.toggle('h-[5px]', active);
+      el.classList.toggle('w-[22px]', active);
+      el.classList.toggle('bg-primary', active);
+      el.classList.toggle('dot-active', active);
+      el.classList.toggle('size-[5px]', !active);
+      el.classList.toggle('bg-[#e0e0e0]', !active);
+    };
+
+    const valid = (i) => {
+      const key = steps[i].dataset.key;
+      if (key === 'contacts') {
+        return [...form.querySelectorAll('[data-field]')].every((f) => f.value.trim());
+      }
+      return !!state[key];
+    };
+
+    const updateChips = () => {
+      if (!chipsBox) return;
+      const vals = [labels.direction, labels.projectType, labels.budget, labels.timeline].filter(Boolean);
+      chipsBox.innerHTML = vals
+        .map((v) => `<span class="rounded-full bg-[#fff0eb] px-3 py-1 text-[12px] font-medium text-primary">${v}</span>`)
+        .join('');
+    };
+
+    const render = () => {
+      steps.forEach((s, i) => s.classList.toggle('hidden', i !== cur));
+      // retrigger enter animation on the now-active panel
+      const active = steps[cur];
+      active.classList.remove('step-enter');
+      void active.offsetWidth;
+      active.classList.add('step-enter');
+      if (stepNum) stepNum.textContent = String(cur + 1);
+      dots.forEach((d, i) => dotOn(d, i === cur));
+
+      navItems.forEach((item, i) => {
+        const circle = item.querySelector('[data-nav-circle]');
+        const label = item.querySelector('[data-nav-label]');
+        const done = i < cur;
+        const active = i === cur;
+        circle.className =
+          'grid size-6 shrink-0 place-items-center rounded-full border-[1.5px] text-[11px] font-semibold transition ' +
+          (done || active ? 'border-primary bg-primary text-white' : 'border-[#d8d8d8] text-[#bbb]');
+        circle.innerHTML = done
+          ? '<svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'
+          : String(i + 1);
+        label.className =
+          'text-[14px] transition ' + (active ? 'font-semibold text-[#111]' : done ? 'text-[#111]' : 'text-[#bbb]');
+      });
+
+      backBtn.classList.toggle('invisible', cur === 0);
+      const last = cur === total - 1;
+      if (actionLabel) actionLabel.textContent = last ? submitLabel : nextLabel;
+      actionArrow.classList.toggle('hidden', last);
+      if (last) updateChips();
+      actionBtn.disabled = !valid(cur);
+    };
+
+    const showTypeGroup = (dir) => {
+      form.querySelectorAll('[data-type-group]').forEach((g) => {
+        const match = g.dataset.dir === dir;
+        g.classList.toggle('hidden', !match);
+        g.classList.toggle('grid', match);
+      });
+    };
+
+    // option selection (delegated)
+    form.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-opt]');
+      if (!btn) return;
+      const panel = btn.closest('[data-step]');
+      const key = panel.dataset.key;
+      panel.querySelectorAll('[data-opt]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+      btn.setAttribute('aria-pressed', 'true');
+      state[key] = btn.dataset.value;
+      labels[key] = btn.dataset.label;
+      if (hidden[key]) hidden[key].value = btn.dataset.label;
+
+      if (key === 'direction') {
+        showTypeGroup(btn.dataset.value);
+        // reset downstream project type if direction changed
+        state.projectType = '';
+        labels.projectType = '';
+        if (hidden.projectType) hidden.projectType.value = '';
+        form.querySelectorAll('[data-type-group] [data-opt]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+      }
+      actionBtn.disabled = !valid(cur);
+    });
+
+    form.querySelectorAll('[data-field]').forEach((f) =>
+      f.addEventListener('input', () => { actionBtn.disabled = !valid(cur); })
+    );
+
+    actionBtn.addEventListener('click', () => {
+      if (!valid(cur)) return;
+      if (cur < total - 1) { cur++; render(); }
+      else form.requestSubmit();
+    });
+    backBtn.addEventListener('click', () => { if (cur > 0) { cur--; render(); } });
+
+    render();
+  });
+</script>

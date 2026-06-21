@@ -1,0 +1,95 @@
+---
+import { type Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="relative flex min-h-[calc(100svh-81px)] flex-col overflow-hidden px-6 py-10 md:px-[53px]">
+  <!-- ambient gradient blobs (subtle) -->
+  <div
+    class="hero-blob animate-blob pointer-events-none absolute -top-10 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full opacity-10 blur-[120px]"
+    aria-hidden="true"
+  >
+  </div>
+  <div
+    class="hero-blob animate-float-soft pointer-events-none absolute bottom-10 right-[8%] h-64 w-64 rounded-full opacity-[0.07] blur-[110px]"
+    aria-hidden="true"
+  >
+  </div>
+
+  <!-- top group: centered in remaining space -->
+  <div class="relative flex flex-1 items-center justify-center">
+    <div class="mx-auto flex max-w-[720px] flex-col items-center gap-7 text-center">
+      <img
+        data-reveal
+        src="/assets/icons/logo-badge.svg"
+        alt="BM Studio"
+        width="80"
+        height="80"
+        class="animate-float-soft size-20"
+      />
+      <h1
+        data-reveal
+        style="--reveal-delay: 90ms"
+        aria-label={t.hero.title}
+        class="min-h-[2.4em] text-[32px] font-medium leading-[1.12] text-fg sm:text-[42px] md:text-[48px]"
+      >
+        <span class="type-text" data-typewriter>{t.hero.title}</span><span class="type-caret" aria-hidden="true"></span>
+      </h1>
+
+      <div data-reveal style="--reveal-delay: 180ms" class="flex flex-wrap items-center justify-center gap-5">
+        <a
+          href="#cases"
+          class="inline-flex h-[46px] items-center justify-center rounded-full border border-primary px-7 text-base text-fg transition hover:scale-[1.03] hover:bg-primary hover:text-white"
+        >
+          {t.hero.ctaCases}
+        </a>
+        <a
+          href="#contact"
+          class="btn-shine inline-flex h-[46px] items-center justify-center rounded-full bg-primary px-7 text-base text-white transition hover:scale-[1.03] hover:bg-primary-hover"
+        >
+          {t.hero.ctaContact}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- subtitle: pinned near the bottom of the hero -->
+  <p
+    data-reveal
+    style="--reveal-delay: 260ms"
+    class="relative mx-auto mb-10 max-w-[640px] text-center text-lg font-medium leading-relaxed text-muted sm:text-xl"
+  >
+    {t.hero.subtitle}
+  </p>
+</section>
+
+<script is:inline>
+  (() => {
+    const el = document.querySelector('[data-typewriter]');
+    if (!el) return;
+    const caret = el.parentElement.querySelector('.type-caret');
+    const full = el.textContent;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return; // keep full text, no animation
+
+    el.textContent = '';
+    // even typing — whole title in ~1.9s regardless of length
+    const step = Math.max(32, Math.round(1900 / full.length));
+    let i = 0;
+
+    const type = () => {
+      if (i >= full.length) return;
+      i++;
+      el.textContent = full.slice(0, i);
+      setTimeout(type, step);
+    };
+
+    setTimeout(type, 250);
+  })();
+</script>

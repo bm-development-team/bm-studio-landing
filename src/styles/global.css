@@ -1,0 +1,274 @@
+@import "tailwindcss";
+
+/* BM Studio — design tokens from Figma (light-first) */
+@theme {
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* logo gradient stops */
+  --color-brand-orange: #e54c15;
+  --color-brand-red: #fd1245;
+  --color-brand-coral: #ff5154;
+
+  /* primary action color (solid) */
+  --color-primary: #e8451b;
+  --color-primary-hover: #cf3c16;
+
+  /* surfaces & text — light theme */
+  --color-bg: #ffffff;
+  --color-fg: #0a0a0a;
+  --color-muted: #6c6b6b;
+  --color-muted-2: #717171;
+  --color-border: #d2d2d2;
+  --color-surface: #fafafa;
+
+  /* brief panel (themable) — light defaults */
+  --color-panel: #f6f6f8;
+  --color-panel-card: #ffffff;
+  --color-panel-input: #ffffff;
+  --color-panel-line: #e6e6ea;
+  --color-panel-fg: #0a0a0a;
+  --color-panel-muted: #8a8a93;
+
+  --radius-card: 30px;
+}
+
+:root {
+  color-scheme: light;
+}
+
+/* Logo gradient (matches Figma 101deg angle) */
+.bg-brand-gradient {
+  background-image: linear-gradient(
+    101.4deg,
+    var(--color-brand-orange) 8%,
+    var(--color-brand-red) 77%,
+    var(--color-brand-coral) 92%
+  );
+}
+
+.text-brand-gradient {
+  background-image: linear-gradient(
+    101.4deg,
+    var(--color-brand-orange) 8%,
+    var(--color-brand-red) 77%,
+    var(--color-brand-coral) 92%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* horizontal scroll rows — hide scrollbar but keep scrolling */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------- Animations ---------- */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes blob-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -24px) scale(1.1); }
+}
+
+@keyframes scroll-cue {
+  0% { transform: translateY(0); opacity: 0; }
+  40% { opacity: 1; }
+  80% { transform: translateY(10px); opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-120%); }
+  60%, 100% { transform: translateX(220%); }
+}
+
+.animate-float-soft { animation: float-soft 5s ease-in-out infinite; }
+.animate-blob { animation: blob-drift 14s ease-in-out infinite; }
+
+/* gradient hero glow blobs */
+.hero-blob {
+  background-image: linear-gradient(
+    101.4deg,
+    var(--color-brand-orange),
+    var(--color-brand-red),
+    var(--color-brand-coral)
+  );
+}
+
+/* scroll cue dot */
+.scroll-cue::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  width: 4px;
+  height: 8px;
+  margin-left: -2px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  animation: scroll-cue 1.8s ease-in-out infinite;
+}
+
+/* shine sweep on primary buttons */
+.btn-shine { position: relative; overflow: hidden; }
+.btn-shine::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: translateX(-120%);
+}
+.btn-shine:hover::before { animation: shimmer 0.9s ease; }
+
+/* typewriter caret */
+.type-caret {
+  display: inline-block;
+  width: 4px;
+  height: 0.95em;
+  margin-left: 6px;
+  vertical-align: -0.08em;
+  border-radius: 2px;
+  background: var(--color-primary);
+  animation: caret-blink 0.9s step-end infinite;
+}
+@keyframes caret-blink {
+  50% { opacity: 0; }
+}
+
+/* heading underline grows on reveal */
+.section-underline {
+  display: block;
+  height: 2px;
+  width: 0;
+  background: var(--color-primary);
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+}
+[data-reveal].is-visible .section-underline {
+  width: 150px;
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Card hover lift */
+.card-lift {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-primary);
+  box-shadow: 0 16px 36px -22px rgba(232, 69, 27, 0.5);
+}
+
+/* ---------- Hover & motion utilities ---------- */
+
+/* animated link underline (slides in from left) */
+.link-underline {
+  background-image: linear-gradient(var(--color-primary), var(--color-primary));
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+  padding-bottom: 2px;
+  transition: background-size 0.32s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
+}
+.link-underline:hover {
+  background-size: 100% 2px;
+}
+
+/* image zoom inside a clipped parent (use with .group) */
+.zoom-img {
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.group:hover .zoom-img {
+  transform: scale(1.06);
+}
+
+/* corner reveal badge (arrow) on case cards */
+.reveal-badge {
+  opacity: 0;
+  transform: translateY(8px) scale(0.9);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:hover .reveal-badge {
+  opacity: 1;
+  transform: none;
+}
+
+/* top accent line on service cards */
+.accent-top {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:hover .accent-top {
+  transform: scaleX(1);
+}
+
+/* wizard step enter animation (retriggered from JS) */
+@keyframes step-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.step-enter {
+  animation: step-in 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* slow drift for the decorative footer outline (keeps its -12deg tilt) */
+@keyframes drift-slow {
+  0%, 100% { transform: rotate(-12deg) translate(0, 0); }
+  50% { transform: rotate(-12deg) translate(-16px, -12px); }
+}
+.animate-drift-slow {
+  animation: drift-slow 18s ease-in-out infinite;
+}
+
+/* gentle pulse for the active progress dot */
+@keyframes dot-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 69, 27, 0.45); }
+  60% { box-shadow: 0 0 0 5px rgba(232, 69, 27, 0); }
+}
+.dot-active {
+  animation: dot-pulse 2.2s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  [data-reveal] {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  html { scroll-behavior: auto; }
+}

@@ -1,0 +1,64 @@
+---
+import { languages, type Lang } from '../i18n/ui';
+import { localizePath, allLangs } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  /** Path without locale prefix, e.g. "/" or "/services". */
+  basePath?: string;
+  label: string;
+}
+const { lang, basePath = '/', label } = Astro.props;
+---
+
+<div class="relative" data-lang-switcher>
+  <button
+    type="button"
+    aria-label={label}
+    aria-haspopup="true"
+    aria-expanded="false"
+    class="flex h-9 items-center gap-1 rounded-full border border-border px-3 text-sm font-medium text-fg transition hover:border-primary hover:text-primary"
+    data-lang-trigger
+  >
+    {lang.toUpperCase()}
+    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  </button>
+  <ul
+    class="absolute right-0 mt-2 hidden min-w-36 overflow-hidden rounded-xl border border-border bg-bg py-1 shadow-lg"
+    data-lang-menu
+  >
+    {allLangs.map((code) => (
+      <li>
+        <a
+          href={localizePath(basePath, code)}
+          hreflang={code}
+          class:list={[
+            'block px-4 py-2 text-sm transition hover:bg-surface',
+            code === lang ? 'font-semibold text-primary' : 'text-fg',
+          ]}
+        >
+          {languages[code]}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<script is:inline>
+  document.querySelectorAll('[data-lang-switcher]').forEach((el) => {
+    const trigger = el.querySelector('[data-lang-trigger]');
+    const menu = el.querySelector('[data-lang-menu]');
+    if (!trigger || !menu) return;
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = menu.classList.toggle('hidden');
+      trigger.setAttribute('aria-expanded', String(!open));
+    });
+    document.addEventListener('click', () => {
+      menu.classList.add('hidden');
+      trigger.setAttribute('aria-expanded', 'false');
+    });
+  });
+</script>

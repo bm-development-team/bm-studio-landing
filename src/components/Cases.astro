@@ -1,0 +1,49 @@
+---
+import { type Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+import SectionHeading from './SectionHeading.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id="cases" class="mx-auto max-w-[1400px] scroll-mt-24 px-6 py-20 md:px-[53px]">
+  <div class="flex items-end justify-between gap-4">
+    <SectionHeading text={t.cases.heading} />
+    <a
+      href="#contact"
+      class="group inline-flex items-center gap-2 whitespace-nowrap text-[18px] text-muted-2 transition hover:text-primary sm:text-[20px]"
+    >
+      {t.cases.viewAll}
+      <svg class="size-5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </svg>
+    </a>
+  </div>
+
+  <div class="no-scrollbar mt-10 flex snap-x gap-[17px] overflow-x-auto pb-2">
+    {t.cases.items.map((item, i) => (
+      <article data-reveal style={`--reveal-delay: ${i * 90}ms`} class="group w-[461px] max-w-[82vw] shrink-0 snap-start">
+        <h3 class="mb-4 text-[22px] font-semibold text-fg transition-colors duration-300 group-hover:text-primary sm:text-[26px]">{item.title}</h3>
+        <div class="card-lift relative aspect-[461/261] overflow-hidden rounded-[20px] border border-border bg-surface">
+          {item.image && (
+            <img
+              src={item.image}
+              alt={item.title}
+              width="461"
+              height="261"
+              loading="lazy"
+              class="zoom-img size-full object-cover"
+            />
+          )}
+          <span class="reveal-badge bg-primary absolute bottom-4 right-4 grid size-10 place-items-center rounded-full text-white shadow-lg" aria-hidden="true">
+            <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+          </span>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

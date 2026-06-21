@@ -1,0 +1,41 @@
+---
+import { type Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+import SectionHeading from './SectionHeading.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id="process" class="mx-auto max-w-[1400px] scroll-mt-24 px-6 py-20 md:px-[53px]">
+  <SectionHeading text={t.process.heading} />
+
+  <div class="mt-12 grid gap-10 lg:grid-cols-[585px_1fr] lg:gap-16">
+    <!-- phone mockup -->
+    <div data-reveal class="group overflow-hidden rounded-[24px] border border-[#d0d0d0]">
+      <img
+        src="/assets/process/phone.png"
+        alt=""
+        width="585"
+        height="785"
+        loading="lazy"
+        class="zoom-img h-full w-full object-cover"
+      />
+    </div>
+
+    <!-- numbered steps with dividers -->
+    <ol class="flex flex-col divide-y divide-[#ededed]">
+      {t.process.steps.map((step, i) => (
+        <li data-reveal style={`--reveal-delay: ${i * 80}ms`} class="group max-w-[513px] py-6 transition-transform duration-300 hover:translate-x-1.5 first:pt-0 last:pb-0">
+          <h3 class="text-[22px] font-normal text-fg sm:text-[26px]">
+            <span class="text-muted-2 transition-colors duration-300 group-hover:text-primary">{i + 1}.</span> {step.title}
+          </h3>
+          <p class="mt-1.5 text-base leading-relaxed text-muted-2">{step.description}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

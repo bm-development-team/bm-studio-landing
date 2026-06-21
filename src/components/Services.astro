@@ -1,0 +1,33 @@
+---
+import { type Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+import SectionHeading from './SectionHeading.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id="services" class="mx-auto max-w-[1400px] scroll-mt-24 px-6 py-20 md:px-[53px]">
+  <SectionHeading text={t.services.heading} />
+
+  <p data-reveal class="mt-5 max-w-[760px] text-base leading-relaxed text-muted-2">
+    {t.services.subtitle}
+  </p>
+
+  <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    {t.services.items.map((service, i) => (
+      <article
+        data-reveal
+        style={`--reveal-delay: ${i * 90}ms`}
+        class="card-lift group relative flex h-[261px] flex-col justify-between overflow-hidden rounded-card border border-border p-6"
+      >
+        <span class="accent-top bg-brand-gradient absolute inset-x-0 top-0 h-[3px]" aria-hidden="true"></span>
+        <h3 class="text-[24px] font-normal text-fg transition-colors duration-300 group-hover:text-primary sm:text-[26px]">{service.title}</h3>
+        <p class="text-base leading-relaxed text-muted-2">{service.description}</p>
+      </article>
+    ))}
+  </div>
+</section>

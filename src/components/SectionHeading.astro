@@ -1,0 +1,11 @@
+---
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+---
+
+<div data-reveal class="inline-block">
+  <h2 class="text-[24px] font-normal text-fg sm:text-[26px]">{text}</h2>
+  <span class="section-underline mt-1.5"></span>
+</div>

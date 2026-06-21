@@ -1,0 +1,89 @@
+---
+import { type Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const nav = [
+  { label: t.nav.services, href: '#services' },
+  { label: t.nav.cases, href: '#cases' },
+];
+---
+
+<header class="sticky top-0 z-50 border-b border-border/60 bg-bg/85 backdrop-blur">
+  <div class="mx-auto grid max-w-[1400px] grid-cols-[1fr_auto_1fr] items-center gap-4 px-6 py-5 md:px-[53px]">
+    <!-- left: nav (desktop) / hamburger (mobile) -->
+    <div class="flex items-center">
+      <nav class="hidden items-center gap-7 text-base md:flex">
+        {nav.map((item) => (
+          <a href={item.href} class="link-underline text-fg hover:text-primary">{item.label}</a>
+        ))}
+      </nav>
+      <button
+        type="button"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-label="Menu"
+        class="grid size-10 place-items-center rounded-lg text-fg transition hover:text-primary md:hidden"
+      >
+        <svg data-menu-open class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg data-menu-close class="hidden size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <!-- center: logo -->
+    <a href="/" class="group flex items-center justify-center gap-2" aria-label="BM Studio">
+      <img src="/assets/icons/logo.svg" alt="" width="48" height="22" class="-rotate-12 transition-transform duration-500 group-hover:-rotate-[28deg] group-hover:scale-110" aria-hidden="true" />
+      <span class="text-brand-gradient text-[26px] font-normal leading-none sm:text-[30px]">BM Studio</span>
+    </a>
+
+    <!-- right: controls + cta -->
+    <div class="flex items-center justify-end gap-2">
+      <LanguageSwitcher lang={lang} basePath="/" label={t.a11y.langSwitch} />
+      <a
+        href="#contact"
+        class="btn-shine hidden h-[46px] items-center justify-center rounded-full bg-primary px-6 text-base font-normal text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/30 sm:inline-flex"
+      >
+        {t.header.cta}
+      </a>
+    </div>
+  </div>
+
+  <!-- mobile dropdown menu -->
+  <div data-menu class="hidden border-t border-border/60 bg-bg/95 backdrop-blur md:hidden">
+    <nav class="mx-auto flex max-w-[1400px] flex-col gap-1 px-6 py-4">
+      {nav.map((item) => (
+        <a href={item.href} data-menu-link class="rounded-lg px-2 py-2.5 text-lg text-fg transition hover:bg-surface hover:text-primary">{item.label}</a>
+      ))}
+      <a href="#contact" data-menu-link class="mt-2 inline-flex h-[48px] items-center justify-center rounded-full bg-primary text-base font-medium text-white transition hover:bg-primary-hover">
+        {t.header.cta}
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script is:inline>
+  (() => {
+    const toggle = document.querySelector('[data-menu-toggle]');
+    const menu = document.querySelector('[data-menu]');
+    if (!toggle || !menu) return;
+    const openIcon = toggle.querySelector('[data-menu-open]');
+    const closeIcon = toggle.querySelector('[data-menu-close]');
+
+    const setOpen = (open) => {
+      menu.classList.toggle('hidden', !open);
+      toggle.setAttribute('aria-expanded', String(open));
+      openIcon?.classList.toggle('hidden', open);
+      closeIcon?.classList.toggle('hidden', !open);
+    };
+
+    toggle.addEventListener('click', () => setOpen(menu.classList.contains('hidden')));
+    menu.querySelectorAll('[data-menu-link]').forEach((l) => l.addEventListener('click', () => setOpen(false)));
+    window.addEventListener('resize', () => { if (window.innerWidth >= 768) setOpen(false); });
+  })();
+</script>

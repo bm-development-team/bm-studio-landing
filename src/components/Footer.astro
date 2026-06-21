@@ -1,0 +1,56 @@
+---
+import { type Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const socials: { label: string; href: string }[] = [
+  { label: 'telegram', href: '#' },
+  { label: 'whatsapp', href: '#' },
+  { label: 'instagram', href: '#' },
+];
+---
+
+<footer class="relative overflow-hidden border-t border-border bg-white">
+  <!-- decorative BM outline -->
+  <img
+    src="/assets/footer/bm-outline.svg"
+    alt=""
+    aria-hidden="true"
+    class="animate-drift-slow pointer-events-none absolute -right-10 bottom-0 hidden w-[680px] max-w-[55%] select-none opacity-90 lg:block"
+  />
+
+  <div class="relative mx-auto max-w-[1400px] px-6 py-14 md:px-[53px] md:py-16">
+    <a href="/" class="inline-flex items-center gap-2" aria-label="BM Studio">
+      <img src="/assets/icons/logo.svg" alt="" width="48" height="22" class="-rotate-12" aria-hidden="true" />
+      <span class="text-brand-gradient text-[28px] leading-none">BM Studio</span>
+    </a>
+
+    <div class="mt-10 grid max-w-[520px] gap-10 sm:grid-cols-[120px_1fr]">
+      <nav class="flex flex-col items-start gap-3 text-base text-fg">
+        <a href="#services" class="link-underline hover:text-primary">{t.nav.services}</a>
+        <a href="#cases" class="link-underline hover:text-primary">{t.nav.cases}</a>
+      </nav>
+
+      <div>
+        <p class="text-base text-fg">{t.footer.contactsLabel}</p>
+        <div class="mt-3 flex flex-col items-start gap-1.5 text-[14px] text-[#555]">
+          <a href={`tel:${t.contact.phone.replace(/[^+\d]/g, '')}`} class="link-underline hover:text-primary">{t.contact.phone}</a>
+          <a href={`mailto:${t.contact.email}`} class="link-underline hover:text-primary">{t.contact.email}</a>
+        </div>
+        <div class="mt-6 flex flex-wrap items-center gap-5">
+          {socials.map((s) => (
+            <a href={s.href} class="inline-flex items-center gap-2 text-[16px] text-fg transition-transform duration-300 hover:-translate-y-0.5 hover:text-primary" aria-label={s.label}>
+              <img src={`/assets/icons/${s.label}.svg`} alt="" width="21" height="21" class="size-[21px]" aria-hidden="true" />
+              {s.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
