@@ -13,7 +13,7 @@ test.describe('Brief wizard', () => {
   test('initial state: step 1/5, back hidden, next disabled', async () => {
     await brief.expectStep(1);
     await expect(brief.dots).toHaveCount(5);
-    await expect(brief.dots.nth(0)).toHaveClass(/w-\[22px\]/);
+    await expect(brief.dots.nth(0)).toHaveAttribute('data-state', 'active');
     await expect(brief.back).toHaveClass(/invisible/);
     await expect(brief.action).toBeDisabled();
   });
@@ -77,9 +77,11 @@ test.describe('Brief wizard', () => {
     await brief.pick('Веб-сайт');
     await brief.next();
     // step 1 nav item is now completed → shows an svg check, not the number
-    await expect(brief.navItems.nth(0).locator('svg')).toBeVisible();
+    // (the list is hidden on phones, where the progress bar does this job)
+    await expect(brief.navItems.nth(0).locator('svg')).toHaveCount(1);
     // active dot moved to second
-    await expect(brief.dots.nth(1)).toHaveClass(/w-\[22px\]/);
+    await expect(brief.dots.nth(1)).toHaveAttribute('data-state', 'active');
+    await expect(brief.dots.nth(0)).toHaveAttribute('data-state', 'done');
   });
 
   test('full web flow → chips + submit', async ({ page }) => {

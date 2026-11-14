@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { expect, type Page, type Locator } from '@playwright/test';
 
 /**
  * Page Object for the multi-step brief wizard inside the contact section.

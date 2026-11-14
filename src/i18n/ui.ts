@@ -9,13 +9,20 @@ export type Lang = keyof typeof languages;
 export const defaultLang: Lang = 'ru';
 
 export interface Service {
-  title: string;
-  description: string;
+  /** two-to-four word statement set at poster size */
+  phrase: string;
+  text: string;
 }
 
 export interface CaseItem {
   title: string;
-  image?: string;
+  category: string;
+  text: string;
+  image: string;
+  imageAlt: string;
+  /** optional second (phone) screenshot */
+  imageMobile?: string;
+  url?: string;
 }
 
 export interface ProcessStep {
@@ -41,17 +48,23 @@ export interface BriefQuestion {
 
 export interface Dictionary {
   meta: { title: string; description: string };
-  nav: { services: string; cases: string };
+  nav: { services: string; cases: string; process: string };
   header: { cta: string };
   hero: {
+    /** full headline, used for aria-label */
     title: string;
-    ctaCases: string;
-    ctaContact: string;
-    subtitle: string;
+    /** the headline split into its two lines */
+    lines: [string, string];
+    lead: string;
+    cta: string;
+    secondary: string;
+    statFigure: string;
+    statText: string;
+    imageAlt: string;
   };
-  services: { heading: string; subtitle: string; items: Service[] };
-  cases: { heading: string; viewAll: string; items: CaseItem[] };
-  process: { heading: string; steps: ProcessStep[] };
+  services: { items: Service[] };
+  cases: { heading: string; visit: string; items: CaseItem[] };
+  process: { heading: string; lead: string; steps: ProcessStep[] };
   contact: {
     heading: string;
     description: string;
@@ -68,8 +81,17 @@ export interface Dictionary {
     back: string;
     next: string;
     submit: string;
+    estimate: {
+      label: string;
+      weeks: string;
+      /** unit forms keyed by Intl.PluralRules category of the max value */
+      weekUnits: Partial<Record<Intl.LDMLPluralRule, string>> & { other: string };
+      budget: string;
+      budgetLow: string;
+      note: string;
+    };
   };
-  footer: { contactsLabel: string };
+  footer: { notes: [string, string]; top: string; menu: string };
   a11y: { langSwitch: string };
 }
 
@@ -80,37 +102,51 @@ export const ui: Record<Lang, Dictionary> = {
       description:
         'BM Studio создаёт сайты, айдентику и digital-интерфейсы, которые формируют первое впечатление, усиливают бренд и помогают бизнесу двигаться быстрее.',
     },
-    nav: { services: 'Услуги', cases: 'Кейсы' },
-    header: { cta: 'Связаться с нами' },
+    nav: { services: 'Услуги', cases: 'Работы', process: 'Процесс' },
+    header: { cta: 'Обсудить проект' },
     hero: {
-      title: 'Digital-студия для брендов, которые хотят звучать громче',
-      ctaCases: 'Наши кейсы',
-      ctaContact: 'Связаться с нами',
-      subtitle:
-        'BM Studio создаёт сайты, айдентику и digital-интерфейсы, которые не просто выглядят красиво — они формируют первое впечатление, усиливают бренд и помогают бизнесу двигаться быстрее.',
+      title: 'Звучите громче',
+      lines: ['Звучите', 'громче'],
+      lead: 'BM Studio — digital-студия. Делаем сайты, приложения и айдентику для брендов, которые хотят, чтобы их замечали.',
+      cta: 'Заполнить бриф',
+      secondary: 'Наши работы',
+      statFigure: '1 день',
+      statText: 'и у вас персональное предложение',
+      imageAlt: 'Сайт REEMAX, сделанный в BM Studio',
     },
     services: {
-      heading: 'Наши услуги',
-      subtitle:
-        'Мы создаём digital-решения, которые помогают бренду выглядеть сильнее, понятнее и заметнее. От первого экрана до финальной кнопки — каждый элемент работает на впечатление, доверие и действие.',
       items: [
-        { title: 'UX/UI дизайн', description: 'Интерфейсы, в которых каждый экран работает на комфорт, логику и безупречный пользовательский опыт.' },
-        { title: 'Разработка сайтов', description: 'Быстрые, адаптивные и аккуратно собранные сайты, готовые к запуску и росту бизнеса.' },
-        { title: 'Лендинги', description: 'Эффектные страницы для продуктов, услуг и запусков, которые красиво раскрывают ценность бренда.' },
-        { title: 'Редизайн', description: 'Обновляем устаревшие сайты — свежий визуал, скорость и удобство без потери смысла.' },
+        { phrase: 'Удобные интерфейсы', text: 'UX/UI-дизайн: проектируем экраны, где каждый шаг понятен — от первого касания до финальной кнопки.' },
+        { phrase: 'Сайты на вырост', text: 'Разработка сайтов: быстрые, адаптивные, аккуратно собранные. Запускаем и закладываем фундамент для роста.' },
+        { phrase: 'Лендинги, что продают', text: 'Одна страница — одна задача. Раскрываем ценность продукта или запуска и ведём посетителя к заявке.' },
+        { phrase: 'Редизайн без потерь', text: 'Обновляем устаревший сайт: свежий визуал, скорость и удобство. Смысл и наработки сохраняем.' },
       ],
     },
     cases: {
-      heading: 'Наши кейсы',
-      viewAll: 'Все',
+      heading: 'Наши работы',
+      visit: 'Открыть сайт',
       items: [
-        { title: 'RestApp', image: '/assets/cases/restapp.png' },
-        { title: 'REEMAX' },
-        { title: 'REEMAX' },
+        {
+          title: 'REEMAX',
+          category: 'Сайт-каталог · B2B',
+          text: 'Сайт казахстанского производителя рабочих перчаток: каталог из 28 моделей с подбором по условиям работы, сертификаты и запрос прайса в один клик. Одинаково удобен с телефона и с компьютера.',
+          image: '/assets/cases/reemax-desktop.jpg',
+          imageMobile: '/assets/cases/reemax-mobile.jpg',
+          imageAlt: 'Главная страница сайта REEMAX',
+          url: 'https://reemax.kz',
+        },
+        {
+          title: 'RestApp',
+          category: 'Мобильное приложение · UX/UI',
+          text: 'Единая платформа для сервиса и отдыха: рестораны, отели и услуги в одном приложении. Спроектировали интерфейс и визуальный стиль — от экрана запуска до входа и регистрации.',
+          image: '/assets/process/phone.png',
+          imageAlt: 'Экраны приложения RestApp',
+        },
       ],
     },
     process: {
       heading: 'Как мы работаем',
+      lead: 'Шесть шагов от заявки до запуска. На каждом вы видите, что происходит, и согласуете результат.',
       steps: [
         { title: 'Заявка', description: 'Вы оставляете заявку или пишете нам напрямую. Мы уточняем задачу, формат проекта и ваши цели.' },
         { title: 'Брифинг', description: 'Разбираем бизнес, аудиторию, конкурентов, стиль и функционал, который нужен проекту.' },
@@ -192,8 +228,16 @@ export const ui: Record<Lang, Dictionary> = {
       back: 'Назад',
       next: 'Далее',
       submit: 'Отправить заявку',
+      estimate: {
+        label: 'Предварительная оценка',
+        weeks: '{min}–{max} {unit}',
+        weekUnits: { one: 'неделя', few: 'недели', many: 'недель', other: 'недели' },
+        budget: 'Обычно бюджет: {budget}',
+        budgetLow: 'Для такого формата обычно нужен бюджет {budget} — обсудим, как уложиться.',
+        note: 'Точную смету пришлём после брифа',
+      },
     },
-    footer: { contactsLabel: 'Контакты' },
+    footer: { notes: ['BM Studio — digital-студия для брендов', 'Отвечаем в течение рабочего дня'], top: 'Наверх', menu: 'Меню' },
     a11y: { langSwitch: 'Выбрать язык' },
   },
 
@@ -203,37 +247,51 @@ export const ui: Record<Lang, Dictionary> = {
       description:
         'BM Studio builds websites, identity and digital interfaces that shape first impressions, strengthen the brand and help business move faster.',
     },
-    nav: { services: 'Services', cases: 'Cases' },
-    header: { cta: 'Get in touch' },
+    nav: { services: 'Services', cases: 'Work', process: 'Process' },
+    header: { cta: 'Start a project' },
     hero: {
-      title: 'Digital studio for brands that want to sound louder',
-      ctaCases: 'Our cases',
-      ctaContact: 'Get in touch',
-      subtitle:
-        'BM Studio builds websites, identity and digital interfaces that not only look great — they shape the first impression, strengthen the brand and help business move faster.',
+      title: 'Sound louder',
+      lines: ['Sound', 'louder'],
+      lead: 'BM Studio is a digital studio. We build websites, apps and identities for brands that want to be noticed.',
+      cta: 'Fill in the brief',
+      secondary: 'Our work',
+      statFigure: '1 day',
+      statText: 'to get your personal proposal',
+      imageAlt: 'REEMAX website made by BM Studio',
     },
     services: {
-      heading: 'Our services',
-      subtitle:
-        'We craft digital solutions that make a brand look stronger, clearer and more visible. From the first screen to the final button — every element works for impression, trust and action.',
       items: [
-        { title: 'UX/UI design', description: 'Interfaces where every screen works for comfort, logic and a flawless user experience.' },
-        { title: 'Web development', description: 'Fast, responsive and neatly built websites, ready to launch and grow your business.' },
-        { title: 'Landing pages', description: 'Striking pages for products, services and launches that reveal the brand value beautifully.' },
-        { title: 'Redesign', description: 'We refresh outdated sites — new visuals, speed and usability without losing the meaning.' },
+        { phrase: 'Frictionless interfaces', text: 'UX/UI design: screens where every step makes sense, from the first tap to the final button.' },
+        { phrase: 'Sites built to grow', text: 'Web development: fast, responsive, neatly built websites, launched with a foundation for growth.' },
+        { phrase: 'Landings that sell', text: 'One page, one job. We show what your product or launch is worth and lead visitors to the request.' },
+        { phrase: 'Redesign, no losses', text: 'We refresh outdated sites: new visuals, speed and usability, keeping the meaning and what already works.' },
       ],
     },
     cases: {
-      heading: 'Our cases',
-      viewAll: 'All',
+      heading: 'Our work',
+      visit: 'Visit the site',
       items: [
-        { title: 'RestApp', image: '/assets/cases/restapp.png' },
-        { title: 'REEMAX' },
-        { title: 'REEMAX' },
+        {
+          title: 'REEMAX',
+          category: 'Catalogue site · B2B',
+          text: 'A website for a Kazakhstani maker of work gloves: a catalogue of 28 models with selection by working conditions, certificates and a one-click price request. Equally easy on a phone and on a desktop.',
+          image: '/assets/cases/reemax-desktop.jpg',
+          imageMobile: '/assets/cases/reemax-mobile.jpg',
+          imageAlt: 'REEMAX website home page',
+          url: 'https://reemax.kz',
+        },
+        {
+          title: 'RestApp',
+          category: 'Mobile app · UX/UI',
+          text: 'One platform for service and leisure: restaurants, hotels and services in a single app. We designed the interface and visual style, from the launch screen to sign-in and sign-up.',
+          image: '/assets/process/phone.png',
+          imageAlt: 'RestApp app screens',
+        },
       ],
     },
     process: {
       heading: 'How we work',
+      lead: 'Six steps from request to launch. At each one you see what is happening and approve the result.',
       steps: [
         { title: 'Request', description: 'You leave a request or message us directly. We clarify the task, project format and your goals.' },
         { title: 'Briefing', description: 'We study the business, audience, competitors, style and the functionality the project needs.' },
@@ -315,8 +373,16 @@ export const ui: Record<Lang, Dictionary> = {
       back: 'Back',
       next: 'Next',
       submit: 'Send request',
+      estimate: {
+        label: 'Rough estimate',
+        weeks: '{min}–{max} {unit}',
+        weekUnits: { one: 'week', other: 'weeks' },
+        budget: 'Typical budget: {budget}',
+        budgetLow: 'This format usually needs {budget} — let\'s discuss how to fit yours.',
+        note: 'Exact quote follows after the brief',
+      },
     },
-    footer: { contactsLabel: 'Contacts' },
+    footer: { notes: ['BM Studio — a digital studio for brands', 'We reply within one business day'], top: 'Back to top', menu: 'Menu' },
     a11y: { langSwitch: 'Select language' },
   },
 
@@ -326,37 +392,51 @@ export const ui: Record<Lang, Dictionary> = {
       description:
         'BM Studio алғашқы әсерді қалыптастыратын, брендті күшейтетін және бизнеске жылдам жүруге көмектесетін сайттар, айдентика және digital интерфейстер жасайды.',
     },
-    nav: { services: 'Қызметтер', cases: 'Кейстер' },
-    header: { cta: 'Хабарласу' },
+    nav: { services: 'Қызметтер', cases: 'Жұмыстар', process: 'Процесс' },
+    header: { cta: 'Жобаны талқылау' },
     hero: {
-      title: 'Қаттырақ естілгісі келетін брендтерге арналған digital студия',
-      ctaCases: 'Біздің кейстер',
-      ctaContact: 'Хабарласу',
-      subtitle:
-        'BM Studio тек әдемі көрінетін емес — алғашқы әсерді қалыптастыратын, брендті күшейтетін және бизнеске жылдам жүруге көмектесетін сайттар, айдентика және digital интерфейстер жасайды.',
+      title: 'Қаттырақ естіліңіз',
+      lines: ['Қаттырақ', 'естіліңіз'],
+      lead: 'BM Studio — digital-студия. Байқалғысы келетін брендтерге сайт, қосымша және айдентика жасаймыз.',
+      cta: 'Брифті толтыру',
+      secondary: 'Жұмыстарымыз',
+      statFigure: '1 күн',
+      statText: 'және сізге жеке ұсыныс дайын',
+      imageAlt: 'BM Studio жасаған REEMAX сайты',
     },
     services: {
-      heading: 'Біздің қызметтер',
-      subtitle:
-        'Брендті күштірек, түсініктірек және көрнектірек ететін digital шешімдер жасаймыз. Алғашқы экраннан соңғы түймеге дейін — әр элемент әсер, сенім және әрекет үшін жұмыс істейді.',
       items: [
-        { title: 'UX/UI дизайн', description: 'Әр экран ыңғайлылық, логика және мінсіз пайдаланушы тәжірибесі үшін жұмыс істейтін интерфейстер.' },
-        { title: 'Сайт әзірлеу', description: 'Жылдам, бейімделген және ұқыпты жиналған, іске қосуға және өсуге дайын сайттар.' },
-        { title: 'Лендингтер', description: 'Бренд құндылығын әдемі ашатын өнімдер, қызметтер мен старттарға арналған әсерлі беттер.' },
-        { title: 'Редизайн', description: 'Ескірген сайттарды жаңартамыз — мағынасын жоғалтпай, жаңа визуал, жылдамдық пен ыңғайлылық.' },
+        { phrase: 'Ыңғайлы интерфейс', text: 'UX/UI дизайн: алғашқы түртуден соңғы батырмаға дейін әр қадамы түсінікті экрандар жобалаймыз.' },
+        { phrase: 'Өсуге дайын сайттар', text: 'Сайт әзірлеу: жылдам, бейімделгіш, ұқыпты жиналған сайттар. Іске қосамыз және өсуге негіз қалаймыз.' },
+        { phrase: 'Сататын лендингтер', text: 'Бір бет — бір міндет. Өнімнің құндылығын ашып, келушіні өтінімге жетелейміз.' },
+        { phrase: 'Шығынсыз редизайн', text: 'Ескірген сайтты жаңартамыз: жаңа визуал, жылдамдық пен ыңғайлылық. Мағынасы мен жетістіктерін сақтаймыз.' },
       ],
     },
     cases: {
-      heading: 'Біздің кейстер',
-      viewAll: 'Барлығы',
+      heading: 'Біздің жұмыстар',
+      visit: 'Сайтты ашу',
       items: [
-        { title: 'RestApp', image: '/assets/cases/restapp.png' },
-        { title: 'REEMAX' },
-        { title: 'REEMAX' },
+        {
+          title: 'REEMAX',
+          category: 'Каталог-сайт · B2B',
+          text: 'Жұмыс қолғаптарын шығаратын қазақстандық өндірушінің сайты: жұмыс жағдайы бойынша таңдауы бар 28 модельден тұратын каталог, сертификаттар және бір басумен прайс сұрау. Телефоннан да, компьютерден де бірдей ыңғайлы.',
+          image: '/assets/cases/reemax-desktop.jpg',
+          imageMobile: '/assets/cases/reemax-mobile.jpg',
+          imageAlt: 'REEMAX сайтының басты беті',
+          url: 'https://reemax.kz',
+        },
+        {
+          title: 'RestApp',
+          category: 'Мобильді қосымша · UX/UI',
+          text: 'Қызмет пен демалысқа арналған бірыңғай платформа: мейрамханалар, қонақүйлер мен қызметтер бір қосымшада. Іске қосу экранынан кіру мен тіркелуге дейін интерфейс пен визуалды стильді жобаладық.',
+          image: '/assets/process/phone.png',
+          imageAlt: 'RestApp қосымшасының экрандары',
+        },
       ],
     },
     process: {
       heading: 'Қалай жұмыс істейміз',
+      lead: 'Өтінімнен іске қосуға дейін алты қадам. Әр қадамда не болып жатқанын көріп, нәтижені келісесіз.',
       steps: [
         { title: 'Өтінім', description: 'Сіз өтінім қалдырасыз немесе бізге тікелей жазасыз. Біз тапсырманы, жоба форматы мен мақсаттарыңызды нақтылаймыз.' },
         { title: 'Брифинг', description: 'Бизнесті, аудиторияны, бәсекелестерді, стиль мен жобаға қажет функционалды талдаймыз.' },
@@ -438,8 +518,16 @@ export const ui: Record<Lang, Dictionary> = {
       back: 'Артқа',
       next: 'Әрі қарай',
       submit: 'Өтінім жіберу',
+      estimate: {
+        label: 'Алдын ала бағалау',
+        weeks: '{min}–{max} {unit}',
+        weekUnits: { other: 'апта' },
+        budget: 'Әдетте бюджет: {budget}',
+        budgetLow: 'Мұндай формат әдетте {budget} бюджетті қажет етеді — қалай сыйғызуды талқылаймыз.',
+        note: 'Нақты сметаны брифтен кейін жібереміз',
+      },
     },
-    footer: { contactsLabel: 'Байланыс' },
+    footer: { notes: ['BM Studio — брендтерге арналған digital-студия', 'Бір жұмыс күні ішінде жауап береміз'], top: 'Жоғары', menu: 'Мәзір' },
     a11y: { langSwitch: 'Тілді таңдау' },
   },
 };

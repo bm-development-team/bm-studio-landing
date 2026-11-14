@@ -17,7 +17,7 @@ const { lang, basePath = '/', label } = Astro.props;
     aria-label={label}
     aria-haspopup="true"
     aria-expanded="false"
-    class="flex h-9 items-center gap-1 rounded-full border border-border px-3 text-sm font-medium text-fg transition hover:border-primary hover:text-primary"
+    class="press flex h-11 items-center gap-1 bg-paper px-3 t-small font-semibold text-ink hover:bg-[#e6e6e6]"
     data-lang-trigger
   >
     {lang.toUpperCase()}
@@ -26,7 +26,7 @@ const { lang, basePath = '/', label } = Astro.props;
     </svg>
   </button>
   <ul
-    class="absolute right-0 mt-2 hidden min-w-36 overflow-hidden rounded-xl border border-border bg-bg py-1 shadow-lg"
+    class="absolute right-0 z-10 mt-1 hidden min-w-40 bg-ink py-2 shadow-[0_16px_32px_-12px_rgba(0,0,0,0.4)]"
     data-lang-menu
   >
     {allLangs.map((code) => (
@@ -35,8 +35,8 @@ const { lang, basePath = '/', label } = Astro.props;
           href={localizePath(basePath, code)}
           hreflang={code}
           class:list={[
-            'block px-4 py-2 text-sm transition hover:bg-surface',
-            code === lang ? 'font-semibold text-primary' : 'text-fg',
+            'block px-4 py-2.5 t-small transition-colors hover:bg-blue',
+            code === lang ? 'font-semibold text-white' : 'text-white/75',
           ]}
         >
           {languages[code]}
