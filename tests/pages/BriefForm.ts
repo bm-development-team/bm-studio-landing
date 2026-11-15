@@ -12,7 +12,6 @@ export class BriefForm {
   readonly back: Locator;
   readonly chips: Locator;
   readonly dots: Locator;
-  readonly navItems: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -22,7 +21,6 @@ export class BriefForm {
     this.back = page.locator('[data-back]');
     this.chips = page.locator('[data-chips] span');
     this.dots = page.locator('[data-dot]');
-    this.navItems = page.locator('[data-nav-item]');
   }
 
   /** The currently visible step panel (others are .hidden). */

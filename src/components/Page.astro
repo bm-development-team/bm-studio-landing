@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from './Header.astro';
 import Hero from './Hero.astro';
+import Statement from './Statement.astro';
 import Services from './Services.astro';
 import Cases from './Cases.astro';
 import Process from './Process.astro';
@@ -66,8 +67,9 @@ const jsonLd = {
   jsonLd={jsonLd}
 >
   <Header lang={lang} />
-  <main id="top" class="scroll-mt-20">
+  <main id="top" class="scroll-mt-20 overflow-x-clip">
     <Hero lang={lang} />
+    <Statement lang={lang} />
     <Services lang={lang} />
     <Cases lang={lang} />
     <Process lang={lang} />

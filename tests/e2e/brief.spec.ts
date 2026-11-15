@@ -73,12 +73,12 @@ test.describe('Brief wizard', () => {
     await expect(brief.action).toBeDisabled();
   });
 
-  test('left nav reflects progress (completed step gets a check)', async ({ page }) => {
+  test('step label and dots reflect progress', async ({ page }) => {
+    const label = page.locator('[data-step-label]');
+    await expect(label).toHaveText('Направление');
     await brief.pick('Веб-сайт');
     await brief.next();
-    // step 1 nav item is now completed → shows an svg check, not the number
-    // (the list is hidden on phones, where the progress bar does this job)
-    await expect(brief.navItems.nth(0).locator('svg')).toHaveCount(1);
+    await expect(label).toHaveText('Тип проекта');
     // active dot moved to second
     await expect(brief.dots.nth(1)).toHaveAttribute('data-state', 'active');
     await expect(brief.dots.nth(0)).toHaveAttribute('data-state', 'done');

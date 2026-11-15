@@ -28,6 +28,10 @@ export interface CaseItem {
 export interface ProcessStep {
   title: string;
   description: string;
+  /** typical length of the stage */
+  duration: string;
+  /** what the client gets at this stage */
+  points: [string, string, string];
 }
 
 export type Direction = 'web' | 'mobile' | 'uxui' | 'identity';
@@ -61,10 +65,13 @@ export interface Dictionary {
     statFigure: string;
     statText: string;
     imageAlt: string;
+    /** hint under the hero card */
+    scroll: string;
   };
-  services: { items: Service[] };
-  cases: { heading: string; visit: string; items: CaseItem[] };
-  process: { heading: string; lead: string; steps: ProcessStep[] };
+  statement: { lines: [string, string]; text: string; cta: string };
+  services: { heading: string; items: Service[] };
+  cases: { heading: string; lead: string; visit: string; view: string; items: CaseItem[] };
+  process: { heading: string; lead: string; stepWord: string; steps: ProcessStep[] };
   contact: {
     heading: string;
     description: string;
@@ -113,18 +120,30 @@ export const ui: Record<Lang, Dictionary> = {
       statFigure: '1 день',
       statText: 'и у вас персональное предложение',
       imageAlt: 'Сайт REEMAX, сделанный в BM Studio',
+      scroll: 'Листайте вниз',
+    },
+    statement: {
+      lines: ['Идеи, которые', 'замечают'],
+      text: 'Соединяем дизайн, движение и разработку, чтобы сайт не просто работал, а запоминался. От лендинга под запуск до приложения — делаем так, чтобы о вас говорили.',
+      cta: 'Наш подход',
     },
     services: {
+      heading: 'Что мы делаем',
       items: [
         { phrase: 'Удобные интерфейсы', text: 'UX/UI-дизайн: проектируем экраны, где каждый шаг понятен — от первого касания до финальной кнопки.' },
         { phrase: 'Сайты на вырост', text: 'Разработка сайтов: быстрые, адаптивные, аккуратно собранные. Запускаем и закладываем фундамент для роста.' },
         { phrase: 'Лендинги, что продают', text: 'Одна страница — одна задача. Раскрываем ценность продукта или запуска и ведём посетителя к заявке.' },
         { phrase: 'Редизайн без потерь', text: 'Обновляем устаревший сайт: свежий визуал, скорость и удобство. Смысл и наработки сохраняем.' },
+        { phrase: 'Выше в поиске', text: 'SEO: структура, скорость, метатеги и контент, чтобы сайт находили в Google и Яндексе по нужным запросам.' },
+        { phrase: 'Видны в ответах ИИ', text: 'GEO: готовим сайт к ChatGPT, Perplexity и поиску с ИИ, чтобы нейросети цитировали и рекомендовали именно вас.' },
+        { phrase: 'Аудит без прикрас', text: 'Проверяем сайт целиком: скорость, SEO, удобство и доступность. Отдаём понятный список того, что мешает заявкам, и план исправлений.' },
       ],
     },
     cases: {
       heading: 'Наши работы',
+      lead: 'Проекты, которые уже работают на бизнес наших клиентов.',
       visit: 'Открыть сайт',
+      view: 'Смотреть',
       items: [
         {
           title: 'REEMAX',
@@ -139,7 +158,7 @@ export const ui: Record<Lang, Dictionary> = {
           title: 'RestApp',
           category: 'Мобильное приложение · UX/UI',
           text: 'Единая платформа для сервиса и отдыха: рестораны, отели и услуги в одном приложении. Спроектировали интерфейс и визуальный стиль — от экрана запуска до входа и регистрации.',
-          image: '/assets/process/phone.png',
+          image: '/assets/cases/restapp-phones.png',
           imageAlt: 'Экраны приложения RestApp',
         },
       ],
@@ -147,13 +166,14 @@ export const ui: Record<Lang, Dictionary> = {
     process: {
       heading: 'Как мы работаем',
       lead: 'Шесть шагов от заявки до запуска. На каждом вы видите, что происходит, и согласуете результат.',
+      stepWord: 'Шаг',
       steps: [
-        { title: 'Заявка', description: 'Вы оставляете заявку или пишете нам напрямую. Мы уточняем задачу, формат проекта и ваши цели.' },
-        { title: 'Брифинг', description: 'Разбираем бизнес, аудиторию, конкурентов, стиль и функционал, который нужен проекту.' },
-        { title: 'Структура', description: 'Собираем логику сайта: страницы, блоки, сценарии пользователя и ключевые действия.' },
-        { title: 'Дизайн', description: 'Создаем визуальную концепцию, подбираем цвета, типографику, стиль и оформляем все экраны.' },
-        { title: 'Разработка', description: 'Переносим дизайн в рабочий сайт, адаптируем под устройства, подключаем формы и базовые настройки.' },
-        { title: 'Запуск', description: 'Проверяем сайт, исправляем детали и подготавливаем проект к публикации.' },
+        { title: 'Заявка', description: 'Вы оставляете заявку или пишете нам напрямую. Мы уточняем задачу, формат проекта и ваши цели.', duration: '1 день', points: ['Созвон 15 минут', 'Понимаем задачу', 'Предварительная оценка'] },
+        { title: 'Брифинг', description: 'Разбираем бизнес, аудиторию, конкурентов, стиль и функционал, который нужен проекту.', duration: '2–3 дня', points: ['Аудит конкурентов', 'Цели и аудитория', 'Техническое задание'] },
+        { title: 'Структура', description: 'Собираем логику сайта: страницы, блоки, сценарии пользователя и ключевые действия.', duration: '3–5 дней', points: ['Карта страниц', 'Прототипы блоков', 'Сценарии пользователя'] },
+        { title: 'Дизайн', description: 'Создаем визуальную концепцию, подбираем цвета, типографику, стиль и оформляем все экраны.', duration: '1–2 недели', points: ['Визуальная концепция', 'Все экраны и адаптив', 'Дизайн-система'] },
+        { title: 'Разработка', description: 'Переносим дизайн в рабочий сайт, адаптируем под устройства, подключаем формы и базовые настройки.', duration: '2–4 недели', points: ['Вёрстка и анимации', 'Формы и интеграции', 'Все устройства'] },
+        { title: 'Запуск', description: 'Проверяем сайт, исправляем детали и подготавливаем проект к публикации.', duration: '2–3 дня', points: ['Тестирование', 'Домен и хостинг', 'SEO-настройки'] },
       ],
     },
     contact: {
@@ -258,18 +278,30 @@ export const ui: Record<Lang, Dictionary> = {
       statFigure: '1 day',
       statText: 'to get your personal proposal',
       imageAlt: 'REEMAX website made by BM Studio',
+      scroll: 'Scroll to explore',
+    },
+    statement: {
+      lines: ['Ideas people', 'notice'],
+      text: 'We combine design, motion and development so a site does more than work — it sticks. From a launch landing page to an app, we make you worth talking about.',
+      cta: 'Our approach',
     },
     services: {
+      heading: 'What we do',
       items: [
         { phrase: 'Frictionless interfaces', text: 'UX/UI design: screens where every step makes sense, from the first tap to the final button.' },
         { phrase: 'Sites built to grow', text: 'Web development: fast, responsive, neatly built websites, launched with a foundation for growth.' },
         { phrase: 'Landings that sell', text: 'One page, one job. We show what your product or launch is worth and lead visitors to the request.' },
         { phrase: 'Redesign, no losses', text: 'We refresh outdated sites: new visuals, speed and usability, keeping the meaning and what already works.' },
+        { phrase: 'Higher in search', text: 'SEO: structure, speed, meta tags and content, so people find your site on Google for the queries that matter.' },
+        { phrase: 'Seen in AI answers', text: 'GEO: we prepare your site for ChatGPT, Perplexity and AI search, so the models quote and recommend you.' },
+        { phrase: 'An honest audit', text: 'We check the whole site: speed, SEO, usability and accessibility. You get a clear list of what costs you leads and a plan to fix it.' },
       ],
     },
     cases: {
       heading: 'Our work',
+      lead: 'Projects already working for our clients.',
       visit: 'Visit the site',
+      view: 'View',
       items: [
         {
           title: 'REEMAX',
@@ -284,7 +316,7 @@ export const ui: Record<Lang, Dictionary> = {
           title: 'RestApp',
           category: 'Mobile app · UX/UI',
           text: 'One platform for service and leisure: restaurants, hotels and services in a single app. We designed the interface and visual style, from the launch screen to sign-in and sign-up.',
-          image: '/assets/process/phone.png',
+          image: '/assets/cases/restapp-phones.png',
           imageAlt: 'RestApp app screens',
         },
       ],
@@ -292,13 +324,14 @@ export const ui: Record<Lang, Dictionary> = {
     process: {
       heading: 'How we work',
       lead: 'Six steps from request to launch. At each one you see what is happening and approve the result.',
+      stepWord: 'Step',
       steps: [
-        { title: 'Request', description: 'You leave a request or message us directly. We clarify the task, project format and your goals.' },
-        { title: 'Briefing', description: 'We study the business, audience, competitors, style and the functionality the project needs.' },
-        { title: 'Structure', description: 'We assemble the site logic: pages, blocks, user scenarios and key actions.' },
-        { title: 'Design', description: 'We create the visual concept, pick colors, typography, style and design every screen.' },
-        { title: 'Development', description: 'We turn the design into a working site, adapt it to devices, connect forms and base settings.' },
-        { title: 'Launch', description: 'We test the site, fix the details and prepare the project for publication.' },
+        { title: 'Request', description: 'You leave a request or message us directly. We clarify the task, project format and your goals.', duration: '1 day', points: ['15-minute call', 'We get the task', 'Rough estimate'] },
+        { title: 'Briefing', description: 'We study the business, audience, competitors, style and the functionality the project needs.', duration: '2–3 days', points: ['Competitor audit', 'Goals and audience', 'Technical brief'] },
+        { title: 'Structure', description: 'We assemble the site logic: pages, blocks, user scenarios and key actions.', duration: '3–5 days', points: ['Sitemap', 'Block wireframes', 'User flows'] },
+        { title: 'Design', description: 'We create the visual concept, pick colors, typography, style and design every screen.', duration: '1–2 weeks', points: ['Visual concept', 'All screens, responsive', 'Design system'] },
+        { title: 'Development', description: 'We turn the design into a working site, adapt it to devices, connect forms and base settings.', duration: '2–4 weeks', points: ['Front-end and motion', 'Forms and integrations', 'Every device'] },
+        { title: 'Launch', description: 'We test the site, fix the details and prepare the project for publication.', duration: '2–3 days', points: ['Testing', 'Domain and hosting', 'SEO setup'] },
       ],
     },
     contact: {
@@ -403,18 +436,30 @@ export const ui: Record<Lang, Dictionary> = {
       statFigure: '1 күн',
       statText: 'және сізге жеке ұсыныс дайын',
       imageAlt: 'BM Studio жасаған REEMAX сайты',
+      scroll: 'Төмен айналдырыңыз',
+    },
+    statement: {
+      lines: ['Байқалатын', 'идеялар'],
+      text: 'Дизайнды, қозғалысты және әзірлеуді біріктіреміз — сайт жай жұмыс істеп қана қоймай, есте қалсын. Іске қосуға арналған лендингтен қосымшаға дейін — сіз туралы айтатындай етеміз.',
+      cta: 'Біздің тәсіл',
     },
     services: {
+      heading: 'Не істейміз',
       items: [
         { phrase: 'Ыңғайлы интерфейс', text: 'UX/UI дизайн: алғашқы түртуден соңғы батырмаға дейін әр қадамы түсінікті экрандар жобалаймыз.' },
         { phrase: 'Өсуге дайын сайттар', text: 'Сайт әзірлеу: жылдам, бейімделгіш, ұқыпты жиналған сайттар. Іске қосамыз және өсуге негіз қалаймыз.' },
         { phrase: 'Сататын лендингтер', text: 'Бір бет — бір міндет. Өнімнің құндылығын ашып, келушіні өтінімге жетелейміз.' },
         { phrase: 'Шығынсыз редизайн', text: 'Ескірген сайтты жаңартамыз: жаңа визуал, жылдамдық пен ыңғайлылық. Мағынасы мен жетістіктерін сақтаймыз.' },
+        { phrase: 'Іздеуде жоғары', text: 'SEO: құрылым, жылдамдық, мета-тегтер мен контент — сайтыңызды Google мен Яндекс қажетті сұраныстар бойынша тапсын.' },
+        { phrase: 'ЖИ жауаптарында', text: 'GEO: сайтты ChatGPT, Perplexity және ЖИ іздеуіне дайындаймыз — нейрожелілер дәл сізді келтіріп, ұсынсын.' },
+        { phrase: 'Әділ аудит', text: 'Сайтты толық тексереміз: жылдамдық, SEO, ыңғайлылық пен қолжетімділік. Өтінімдерге не кедергі екенін және түзету жоспарын береміз.' },
       ],
     },
     cases: {
       heading: 'Біздің жұмыстар',
+      lead: 'Клиенттеріміздің бизнесі үшін жұмыс істеп тұрған жобалар.',
       visit: 'Сайтты ашу',
+      view: 'Қарау',
       items: [
         {
           title: 'REEMAX',
@@ -429,7 +474,7 @@ export const ui: Record<Lang, Dictionary> = {
           title: 'RestApp',
           category: 'Мобильді қосымша · UX/UI',
           text: 'Қызмет пен демалысқа арналған бірыңғай платформа: мейрамханалар, қонақүйлер мен қызметтер бір қосымшада. Іске қосу экранынан кіру мен тіркелуге дейін интерфейс пен визуалды стильді жобаладық.',
-          image: '/assets/process/phone.png',
+          image: '/assets/cases/restapp-phones.png',
           imageAlt: 'RestApp қосымшасының экрандары',
         },
       ],
@@ -437,13 +482,14 @@ export const ui: Record<Lang, Dictionary> = {
     process: {
       heading: 'Қалай жұмыс істейміз',
       lead: 'Өтінімнен іске қосуға дейін алты қадам. Әр қадамда не болып жатқанын көріп, нәтижені келісесіз.',
+      stepWord: 'Қадам',
       steps: [
-        { title: 'Өтінім', description: 'Сіз өтінім қалдырасыз немесе бізге тікелей жазасыз. Біз тапсырманы, жоба форматы мен мақсаттарыңызды нақтылаймыз.' },
-        { title: 'Брифинг', description: 'Бизнесті, аудиторияны, бәсекелестерді, стиль мен жобаға қажет функционалды талдаймыз.' },
-        { title: 'Құрылым', description: 'Сайт логикасын жинаймыз: беттер, блоктар, пайдаланушы сценарийлері және негізгі әрекеттер.' },
-        { title: 'Дизайн', description: 'Визуалды концепция жасаймыз, түс, типографика, стиль таңдап, барлық экрандарды безендіреміз.' },
-        { title: 'Әзірлеу', description: 'Дизайнды жұмыс сайтына көшіреміз, құрылғыларға бейімдейміз, формалар мен негізгі баптауларды қосамыз.' },
-        { title: 'Іске қосу', description: 'Сайтты тексереміз, бөлшектерді түзетеміз және жобаны жариялауға дайындаймыз.' },
+        { title: 'Өтінім', description: 'Сіз өтінім қалдырасыз немесе бізге тікелей жазасыз. Біз тапсырманы, жоба форматы мен мақсаттарыңызды нақтылаймыз.', duration: '1 күн', points: ['15 минуттық қоңырау', 'Міндетті түсінеміз', 'Алдын ала бағалау'] },
+        { title: 'Брифинг', description: 'Бизнесті, аудиторияны, бәсекелестерді, стиль мен жобаға қажет функционалды талдаймыз.', duration: '2–3 күн', points: ['Бәсекелестер аудиті', 'Мақсат пен аудитория', 'Техникалық тапсырма'] },
+        { title: 'Құрылым', description: 'Сайт логикасын жинаймыз: беттер, блоктар, пайдаланушы сценарийлері және негізгі әрекеттер.', duration: '3–5 күн', points: ['Беттер картасы', 'Блок прототиптері', 'Пайдаланушы сценарийлері'] },
+        { title: 'Дизайн', description: 'Визуалды концепция жасаймыз, түс, типографика, стиль таңдап, барлық экрандарды безендіреміз.', duration: '1–2 апта', points: ['Визуалды концепция', 'Барлық экрандар мен адаптив', 'Дизайн-жүйе'] },
+        { title: 'Әзірлеу', description: 'Дизайнды жұмыс сайтына көшіреміз, құрылғыларға бейімдейміз, формалар мен негізгі баптауларды қосамыз.', duration: '2–4 апта', points: ['Беттеу мен анимация', 'Формалар мен интеграциялар', 'Барлық құрылғылар'] },
+        { title: 'Іске қосу', description: 'Сайтты тексереміз, бөлшектерді түзетеміз және жобаны жариялауға дайындаймыз.', duration: '2–3 күн', points: ['Тестілеу', 'Домен мен хостинг', 'SEO баптаулары'] },
       ],
     },
     contact: {

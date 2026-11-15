@@ -15,38 +15,57 @@ test.describe('Home page — structure', () => {
     await expect(header.getByRole('link', { name: 'Обсудить проект' })).toBeVisible();
   });
 
-  test('hero: headline, one action, real work picture', async ({ page }) => {
+  test('hero: headline, one action, live 3D card', async ({ page }) => {
     const h1 = page.locator('main h1');
     await expect(h1).toHaveAttribute('aria-label', /Звучите громче/);
     await expect(page.getByRole('link', { name: 'Заполнить бриф' })).toBeVisible();
-    await expect(page.locator('main section').first().locator('img')).toHaveAttribute('alt', /REEMAX/);
+    // the scene mounts a canvas into the dark card once three.js loads
+    await expect(page.locator('[data-hero-card] canvas')).toHaveCount(1, { timeout: 10_000 });
+    await expect(page.locator('[data-hero-card]')).toHaveClass(/is-ready/);
   });
 
-  test('services: four statement fields, each with a demo', async ({ page }) => {
+  test('statement: big line, real work window, approach link', async ({ page }) => {
+    const section = page.locator('[data-statement]');
+    await expect(section.getByRole('heading', { name: /Идеи, которые/ })).toBeAttached();
+    await expect(section.getByRole('img', { name: /REEMAX/ })).toBeVisible();
+    await expect(section.getByRole('link', { name: 'Наш подход' })).toHaveAttribute('href', '#process');
+  });
+
+  test('no horizontal overflow', async ({ page }) => {
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+
+  test('services: seven cards incl. SEO, GEO and audit, each with a demo', async ({ page }) => {
     const section = page.locator('#services');
-    await expect(section.locator('[data-field]')).toHaveCount(4);
+    await expect(section.locator('[data-field]')).toHaveCount(7);
     await expect(section.getByRole('heading', { name: 'Удобные интерфейсы' })).toBeVisible();
-    await expect(section.locator('.sd')).toHaveCount(4);
+    await expect(section.getByRole('heading', { name: 'Выше в поиске' })).toBeVisible();
+    await expect(section.getByRole('heading', { name: 'Видны в ответах ИИ' })).toBeVisible();
+    await expect(section.getByRole('heading', { name: 'Аудит без прикрас' })).toBeVisible();
+    await expect(section.locator('.sd')).toHaveCount(7);
   });
 
-  test('cases: REEMAX and RestApp folders with real pictures', async ({ page }) => {
+  test('cases: REEMAX and RestApp cards with mock previews', async ({ page }) => {
     const section = page.locator('#cases');
     await expect(section.getByRole('heading', { name: 'Наши работы' })).toBeVisible();
     await expect(section.locator('[data-case]')).toHaveCount(2);
     await expect(section.getByRole('heading', { name: 'REEMAX' })).toBeVisible();
     await expect(section.getByRole('heading', { name: 'RestApp' })).toBeVisible();
     await expect(section.getByRole('link', { name: /Открыть сайт/ })).toHaveAttribute('href', 'https://reemax.kz');
+    await expect(section.getByRole('link', { name: /Открыть сайт/ })).toHaveAttribute('rel', 'noopener');
   });
 
-  test('process: heading, 6 stages, first open with the phone', async ({ page }) => {
+  test('process: heading, 6 steps, first active, sticky panel with phone', async ({ page }) => {
     const section = page.locator('#process');
     await expect(section.getByRole('heading', { name: 'Как мы работаем' })).toBeVisible();
     await expect(section.locator('[data-stage]')).toHaveCount(6);
-    await expect(section.locator('[data-stage-btn]').first()).toHaveAttribute('aria-expanded', 'true');
-    await expect(section.locator('[data-stage="0"] [data-process-phone]')).toBeVisible();
+    await expect(section.locator('[data-stage="0"]')).toHaveClass(/is-active/);
+    await expect(section.locator('[data-process-phone]')).toHaveCount(1);
+    await expect(section.getByRole('heading', { name: 'Запуск' })).toBeVisible();
   });
 
-  test('contact: coupon brief present', async ({ page }) => {
+  test('contact: brief card present', async ({ page }) => {
     const section = page.locator('#contact');
     await expect(section.getByRole('heading', { name: 'Готовы начать?' })).toBeVisible();
     await expect(section.locator('[data-brief]')).toBeVisible();
@@ -86,6 +105,20 @@ test.describe('Mobile menu', () => {
     test.skip(testInfo.project.name.includes('mobile'), 'desktop-only check');
     await page.goto('/');
     await expect(page.locator('[data-menu-toggle]')).toBeHidden();
+  });
+
+  test('header CTA pill hidden on phones (pill must not beat `hidden`)', async ({ page }, testInfo) => {
+    test.skip(!testInfo.project.name.includes('mobile'), 'mobile-only check');
+    await page.goto('/');
+    await expect(page.locator('header .header-cta')).toBeHidden();
+  });
+
+  test('header turns dark over the process section', async ({ page }) => {
+    await page.goto('/');
+    const header = page.locator('[data-header]');
+    await expect(header).not.toHaveClass(/is-dark/);
+    await page.locator('#process').evaluate((el) => window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + 40));
+    await expect(header).toHaveClass(/is-dark/);
   });
 });
 

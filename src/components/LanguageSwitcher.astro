@@ -17,7 +17,7 @@ const { lang, basePath = '/', label } = Astro.props;
     aria-label={label}
     aria-haspopup="true"
     aria-expanded="false"
-    class="press flex h-11 items-center gap-1 bg-paper px-3 t-small font-semibold text-ink hover:bg-[#e6e6e6]"
+    class="pill gap-1 bg-white px-3.5 text-ink hover:bg-paper-deep"
     data-lang-trigger
   >
     {lang.toUpperCase()}
@@ -26,7 +26,7 @@ const { lang, basePath = '/', label } = Astro.props;
     </svg>
   </button>
   <ul
-    class="absolute right-0 z-10 mt-1 hidden min-w-40 bg-ink py-2 shadow-[0_16px_32px_-12px_rgba(0,0,0,0.4)]"
+    class="absolute right-0 z-10 mt-2 hidden min-w-40 overflow-hidden rounded-2xl bg-ink py-2"
     data-lang-menu
   >
     {allLangs.map((code) => (

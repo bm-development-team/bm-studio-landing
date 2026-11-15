@@ -53,39 +53,49 @@ test.describe('Brief — live estimate', () => {
   });
 });
 
-test.describe('Process — accordion', () => {
-  test('opening a stage moves the phone and switches its screen', async ({ page }) => {
+test.describe('Process — sticky panel follows the steps', () => {
+  test('scrolling a step to the middle activates it and updates the panel', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name.includes('mobile'), 'panel is desktop-only');
     await page.goto('/');
-    const section = page.locator('#process');
-    const stage = section.locator('[data-stage="3"]');
-    await stage.locator('[data-stage-btn]').click();
-    await expect(stage).toHaveClass(/is-open/);
-    await expect(stage.locator('[data-stage-btn]')).toHaveAttribute('aria-expanded', 'true');
-    await expect(section.locator('[data-stage="0"] [data-stage-btn]')).toHaveAttribute('aria-expanded', 'false');
-    const phone = stage.locator('[data-process-phone]');
-    await expect(phone).toHaveAttribute('data-active', '3');
-    await expect(phone.locator('.pp-screen').nth(3)).toHaveClass(/is-active/);
+    const centre = async (i: number) => {
+      await page.locator(`[data-stage="${i}"]`).evaluate((el: HTMLElement) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    };
+    await centre(3);
+    await expect(page.locator('[data-stage="3"]')).toHaveClass(/is-active/);
+    await expect(page.locator('[data-stage="0"]')).not.toHaveClass(/is-active/);
+    await expect(page.locator('[data-panel-num]')).toHaveText('04');
+    await expect(page.locator('[data-process-phone]')).toHaveAttribute('data-active', '3');
+    const panel = await page.locator('[data-process-panel]').boundingBox();
+    expect(panel && panel.y).toBeGreaterThanOrEqual(0);
+    await centre(5);
+    await expect(page.locator('[data-panel-title]')).toHaveText('Запуск');
   });
 });
 
-test.describe('Process — scroll-driven on desktop', () => {
-  test('scrolling through the track opens stages in order', async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name.includes('mobile'), 'desktop-only behaviour');
+test.describe('Mobile — swipe services and step accordion', () => {
+  test('services rail scrolls sideways and updates the counter', async ({ page }, testInfo) => {
+    test.skip(!testInfo.project.name.includes('mobile'), 'mobile-only behaviour');
     await page.goto('/');
-    const track = page.locator('[data-process-track]');
-    const stageAt = async (fraction: number) => {
-      await track.evaluate((el: HTMLElement, f) => {
-        const top = el.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo(0, top + (el.offsetHeight - window.innerHeight) * f);
-      }, fraction);
-    };
-    for (const [fraction, stage] of [[0.05, '0'], [0.4, '2'], [0.97, '5']] as const) {
-      await stageAt(fraction);
-      await expect(page.locator(`[data-stage="${stage}"]`)).toHaveClass(/is-open/);
-    }
-    // the accordion stays pinned on screen while the track scrolls
-    const box = await page.locator('[data-stages]').boundingBox();
-    expect(box && box.y).toBeGreaterThanOrEqual(0);
+    const rail = page.locator('[data-services-rail]');
+    await rail.scrollIntoViewIfNeeded();
+    const { sw, cw } = await rail.evaluate((el: HTMLElement) => ({ sw: el.scrollWidth, cw: el.clientWidth }));
+    expect(sw).toBeGreaterThan(cw * 3);
+    await rail.evaluate((el: HTMLElement) => el.scrollTo({ left: el.scrollWidth, behavior: 'instant' }));
+    await expect(page.locator('[data-services-count]')).toHaveText('07 / 07');
+  });
+
+  test('process steps open one at a time', async ({ page }, testInfo) => {
+    test.skip(!testInfo.project.name.includes('mobile'), 'mobile-only behaviour');
+    await page.goto('/');
+    const first = page.locator('[data-stage="0"]');
+    const third = page.locator('[data-stage="2"]');
+    await expect(first).toHaveClass(/is-open/);
+    await third.locator('[data-step-toggle]').click();
+    await expect(third).toHaveClass(/is-open/);
+    await expect(third.locator('[data-step-toggle]')).toHaveAttribute('aria-expanded', 'true');
+    await expect(first).not.toHaveClass(/is-open/);
+    await third.locator('[data-step-toggle]').click();
+    await expect(third).not.toHaveClass(/is-open/);
   });
 });
 

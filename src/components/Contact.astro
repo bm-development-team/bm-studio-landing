@@ -10,84 +10,52 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const c = t.contact;
 
-// option = filled block in a lighter tone of the coupon; pressed = solid ink
+// option = white tile on the soft panel; pressed = solid ink
 const optBase =
-  'group flex w-full items-center justify-between gap-3 bg-red-soft px-4 py-4 text-left text-ink transition-colors duration-200 hover:bg-[#ff9378] aria-pressed:bg-ink aria-pressed:text-white';
+  'group flex w-full items-center justify-between gap-3 rounded-2xl bg-paper px-5 py-4 text-left text-ink transition-colors duration-300 hover:bg-paper-deep aria-pressed:bg-ink aria-pressed:text-white';
 const radioDot =
-  'grid size-5 shrink-0 place-items-center rounded-full border-2 border-ink/50 transition group-aria-pressed:border-white group-aria-pressed:bg-white';
+  'grid size-5 shrink-0 place-items-center rounded-full border-2 border-ink/25 transition group-aria-pressed:border-white group-aria-pressed:bg-white';
 const check =
   '<svg class="size-2.5 scale-0 text-ink transition-transform group-aria-pressed:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
 const inputClass =
-  'mt-2 h-14 w-full bg-red-soft px-4 t-body text-ink placeholder:text-ink/55 focus:bg-white focus:outline-none focus-visible:outline-2 focus-visible:outline-ink';
-const qTitle = 't-lead font-extrabold tracking-[-0.02em]';
-const qSub = 't-small mt-1 font-medium text-ink/70';
+  'mt-2 h-14 w-full rounded-2xl bg-paper px-4 t-body text-ink placeholder:text-ink/45 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue';
+const qTitle = 'text-[clamp(1.5rem,1.2rem+1vw,2.25rem)] font-medium leading-tight tracking-[-0.03em]';
+const qSub = 't-body mt-2 text-ink/65';
+const tel = c.phone.replace(/[^+\d]/g, '');
 ---
 
-<!-- Contact: the brief is a coupon to tear off. Phone: upright card, horizontal perforation.
-     Desktop: wide card, vertical perforation at ~42%. -->
-<section id="contact" class="scroll-mt-16 bg-white px-3 py-16 md:scroll-mt-20 md:px-8 md:py-24 lg:py-32">
-  <form
-    data-brief
-    data-reveal
-    method="POST"
-    action="https://formspree.io/f/YOUR_FORM_ID"
-    class="mx-auto flex max-w-[1376px] flex-col overflow-hidden bg-red text-ink lg:grid lg:grid-cols-[minmax(0,42fr)_32px_minmax(0,58fr)]"
-  >
-    <!-- LEFT: heading, sentence, progress list, live estimate, direct contacts -->
-    <div class="flex flex-col gap-8 p-6 md:p-10 lg:p-12">
-      <div>
-        <h2 class="t-head max-w-[9ch]">{c.heading}</h2>
-        <p class="t-body mt-5 max-w-[34ch] font-medium">{c.description}</p>
-      </div>
-
-      <ol class="hidden flex-col gap-2.5 md:flex" data-nav>
-        {c.stepNav.map((label, i) => (
-          <li class="flex items-center gap-3" data-nav-item>
-            <span data-nav-circle class:list={['grid size-6 shrink-0 place-items-center rounded-full t-small font-bold', i === 0 ? 'bg-ink text-white' : 'border-2 border-ink/35 text-ink/60']}>{i + 1}</span>
-            <span data-nav-label class:list={['t-body', i === 0 ? 'font-bold' : 'font-medium text-ink/60']}>{label}</span>
-          </li>
-        ))}
-      </ol>
-
-      <!-- live estimate (appears once a project type is chosen) -->
-      <div data-estimate hidden class="bg-ink p-5 text-white">
-        <p class="flex items-center gap-2 t-small font-semibold text-white/70">
-          <span class="estimate-pulse size-2 rounded-full bg-red" aria-hidden="true"></span>
-          {c.estimate.label}
-        </p>
-        <p class="t-head mt-3" data-estimate-weeks aria-live="polite"></p>
-        <p class="t-body mt-2 text-white/80" data-estimate-budget></p>
-        <div class="mt-4 h-1.5 bg-white/15">
-          <span data-estimate-bar class="block h-full bg-red transition-[width] duration-700 ease-out" style="width: 0%"></span>
-        </div>
-        <p class="t-small mt-3 text-white/60">{c.estimate.note}</p>
-      </div>
-
-      <div class="mt-auto flex flex-col gap-1 t-body font-semibold">
-        <a href={`tel:${c.phone.replace(/[^+\d]/g, '')}`} class="w-fit hover:underline">{c.phone}</a>
-        <a href={`mailto:${c.email}`} class="w-fit hover:underline">{c.email}</a>
+<!-- Contact: a short pitch on the paper, the brief in one white card. Nothing nested, one action. -->
+<section id="contact" class="scroll-mt-16 px-3 py-20 md:scroll-mt-20 md:px-8 md:py-32">
+  <div class="mx-auto grid max-w-[1440px] grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-12 lg:gap-x-8">
+    <div data-reveal class="flex flex-col gap-6 px-1 lg:col-span-4 lg:pt-8">
+      <h2 class="t-head">{c.heading}</h2>
+      <p class="t-lead max-w-[26ch] text-ink/75">{c.description}</p>
+      <div class="flex flex-col pt-1 t-body">
+        <a href={`tel:${tel}`} class="w-fit py-1.5 font-medium text-ink underline-offset-4 hover:underline">{c.phone}</a>
+        <a href={`mailto:${c.email}`} class="w-fit break-all py-1.5 font-medium text-ink underline-offset-4 hover:underline">{c.email}</a>
       </div>
     </div>
 
-    <!-- perforation -->
-    <div class="perf perf-h perf-v flex items-center justify-center" aria-hidden="true">
-      <span class="perf-dots-h perf-dots-v block w-[calc(100%-40px)] lg:h-[calc(100%-40px)] lg:w-auto"></span>
-    </div>
-
-    <!-- RIGHT: the wizard -->
-    <div class="flex flex-col p-6 md:p-10 lg:p-12">
+    <form
+      data-brief
+      data-reveal
+      style="--reveal-delay: 90ms"
+      method="POST"
+      action="https://formspree.io/f/YOUR_FORM_ID"
+      class="card flex flex-col bg-white p-5 text-ink md:p-10 lg:col-span-8"
+    >
       <div class="flex items-center justify-between gap-4">
-        <span class="t-small font-semibold">
-          {c.stepWord} <span data-step-num>1</span> {c.ofWord} 5
-        </span>
-        <div class="flex w-40 gap-1" data-dots role="presentation">
+        <p class="t-small text-ink/65">
+          {c.stepWord} <span data-step-num>1</span> {c.ofWord} 5 · <span data-step-label class="text-ink">{c.stepNav[0]}</span>
+        </p>
+        <div class="flex w-32 gap-1 md:w-40" data-dots role="presentation">
           {Array.from({ length: 5 }).map((_, i) => (
-            <span data-dot data-state={i === 0 ? 'active' : 'todo'} class="h-2 flex-1 bg-ink/20 transition-colors data-[state=active]:bg-ink data-[state=done]:bg-ink/60"></span>
+            <span data-dot data-state={i === 0 ? 'active' : 'todo'} class="h-1.5 flex-1 rounded-full bg-ink/10 transition-colors duration-500 data-[state=active]:bg-blue data-[state=done]:bg-ink"></span>
           ))}
         </div>
       </div>
 
-      <div class="mt-8 flex-1">
+      <div class="mt-8">
         <!-- STEP 1: direction -->
         <div data-step data-key="direction" data-num="0">
           <h3 class={qTitle}>{c.q1.title}</h3>
@@ -96,7 +64,7 @@ const qSub = 't-small mt-1 font-medium text-ink/70';
             {c.q1.options.map((o) => (
               <button type="button" data-opt data-value={o.value} data-label={o.label} aria-pressed="false" class={optBase}>
                 <span class="flex flex-col">
-                  <span class="t-body font-bold">{o.label}</span>
+                  <span class="t-body font-medium">{o.label}</span>
                   {o.sub && <span class="t-small opacity-75">{o.sub}</span>}
                 </span>
                 <span class={radioDot} set:html={check} />
@@ -114,7 +82,7 @@ const qSub = 't-small mt-1 font-medium text-ink/70';
               {opts.map((o, idx) => (
                 <button type="button" data-opt data-idx={idx} data-value={o.value} data-label={o.label} aria-pressed="false" class={optBase}>
                   <span class="flex flex-col">
-                    <span class="t-body font-bold">{o.label}</span>
+                    <span class="t-body font-medium">{o.label}</span>
                     {o.sub && <span class="t-small opacity-75">{o.sub}</span>}
                   </span>
                   <span class={radioDot} set:html={check} />
@@ -132,14 +100,14 @@ const qSub = 't-small mt-1 font-medium text-ink/70';
             {c.q3.options.map((o, tier) => (
               <button type="button" data-opt data-tier={tier} data-value={o.value} data-label={o.label} aria-pressed="false" class={optBase}>
                 <span class="flex flex-col">
-                  <span class="t-body font-bold">{o.label}</span>
+                  <span class="t-body font-medium">{o.label}</span>
                   {o.sub && <span class="t-small opacity-75">{o.sub}</span>}
                 </span>
                 <span class={radioDot} set:html={check} />
               </button>
             ))}
           </div>
-          <p data-budget-hint hidden class="estimate-in t-small mt-4 bg-ink px-4 py-3 font-medium text-white"></p>
+          <p data-budget-hint hidden class="estimate-in t-small mt-4 rounded-2xl bg-ink px-4 py-3 text-white"></p>
         </div>
 
         <!-- STEP 4: timeline -->
@@ -149,7 +117,7 @@ const qSub = 't-small mt-1 font-medium text-ink/70';
           <div class="mt-5 flex flex-col gap-2">
             {c.q4.options.map((o) => (
               <button type="button" data-opt data-value={o.value} data-label={o.label} aria-pressed="false" class={optBase}>
-                <span class="t-body font-bold">{o.label}</span>
+                <span class="t-body font-medium">{o.label}</span>
                 <span class={radioDot} set:html={check} />
               </button>
             ))}
@@ -163,11 +131,11 @@ const qSub = 't-small mt-1 font-medium text-ink/70';
           <div data-chips class="mt-4 flex flex-wrap gap-2"></div>
           <div class="mt-5 space-y-3">
             <label class="block">
-              <span class="t-small font-semibold">{c.q5.nameLabel}</span>
+              <span class="t-small font-medium text-ink/70">{c.q5.nameLabel}</span>
               <input type="text" name="name" required autocomplete="name" data-field placeholder={c.q5.namePlaceholder} class={inputClass} />
             </label>
             <label class="block">
-              <span class="t-small font-semibold">{c.q5.contactLabel}</span>
+              <span class="t-small font-medium text-ink/70">{c.q5.contactLabel}</span>
               <input type="text" name="contact" required autocomplete="email" data-field placeholder={c.q5.contactPlaceholder} class={inputClass} />
             </label>
           </div>
@@ -180,26 +148,47 @@ const qSub = 't-small mt-1 font-medium text-ink/70';
       <input type="hidden" name="budget" data-in="budget" />
       <input type="hidden" name="timeline" data-in="timeline" />
 
-      <div class="mt-8 flex flex-col-reverse gap-2 sm:flex-row sm:items-center">
-        <button type="button" data-back class="invisible flex h-14 items-center justify-center gap-2 px-5 t-body font-semibold hover:underline">
+
+
+      <div class="mt-6">
+        <div data-estimate hidden class="rounded-2xl bg-ink p-5 text-white">
+          <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+            <div>
+              <p class="t-micro flex items-center gap-2 text-white/60">
+                <span class="estimate-pulse size-2 rounded-full bg-blue" aria-hidden="true"></span>
+                {c.estimate.label}
+              </p>
+              <p class="mt-2 text-[clamp(1.75rem,1.3rem+1.4vw,2.5rem)] font-medium leading-none tracking-[-0.04em]" data-estimate-weeks aria-live="polite"></p>
+            </div>
+            <p class="t-body text-white/80" data-estimate-budget></p>
+          </div>
+          <div class="mt-4 h-1.5 overflow-hidden rounded-full bg-white/15">
+            <span data-estimate-bar class="block h-full rounded-full bg-blue transition-[width] duration-700 ease-out" style="width: 0%"></span>
+          </div>
+          <p class="t-small mt-3 text-white/55">{c.estimate.note}</p>
+        </div>
+      </div>
+
+      <div class="mt-8 flex items-center justify-between gap-3">
+        <button type="button" data-back class="pill pill-lg invisible bg-paper text-ink hover:bg-paper-deep">
           <span aria-hidden="true">←</span> {c.back}
         </button>
-        <button type="button" data-action class="press group/btn flex h-14 flex-1 items-center justify-center gap-2 bg-ink px-7 t-body font-bold text-white hover:bg-[#222] disabled:cursor-not-allowed disabled:bg-ink/35 disabled:hover:translate-y-0">
+        <button type="button" data-action class="pill pill-lg group/btn bg-ink px-8 text-white hover:bg-blue disabled:cursor-not-allowed disabled:bg-ink/10 disabled:text-ink/40 disabled:hover:bg-ink/10">
           <span data-action-label>{c.next}</span>
           <span data-action-arrow class="transition-transform duration-300 group-hover/btn:translate-x-1" aria-hidden="true">→</span>
         </button>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </section>
 
-<script is:inline define:vars={{ nextLabel: c.next, submitLabel: c.submit, estimates, est: c.estimate, lang, budgetLabels: c.q3.options.map((o) => o.label) }}>
+<script is:inline define:vars={{ stepNames: c.stepNav, nextLabel: c.next, submitLabel: c.submit, estimates, est: c.estimate, lang, budgetLabels: c.q3.options.map((o) => o.label) }}>
   document.querySelectorAll('[data-brief]').forEach((form) => {
     const steps = [...form.querySelectorAll('[data-step]')];
     const total = steps.length;
-    const navItems = [...form.querySelectorAll('[data-nav-item]')];
     const dots = [...form.querySelectorAll('[data-dot]')];
     const stepNum = form.querySelector('[data-step-num]');
+    const stepLabel = form.querySelector('[data-step-label]');
     const backBtn = form.querySelector('[data-back]');
     const actionBtn = form.querySelector('[data-action]');
     const actionLabel = form.querySelector('[data-action-label]');
@@ -256,15 +245,12 @@ const qSub = 't-small mt-1 font-medium text-ink/70';
       chipsBox.replaceChildren(
         ...vals.map((v) => {
           const chip = document.createElement('span');
-          chip.className = 'bg-ink px-3 py-1.5 t-small font-semibold text-white';
+          chip.className = 'rounded-full bg-paper px-3 py-1.5 t-small font-medium text-ink';
           chip.textContent = v;
           return chip;
         }),
       );
     };
-
-    const checkSvg =
-      '<svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
 
     const render = () => {
       steps.forEach((s, i) => s.classList.toggle('hidden', i !== cur));
@@ -273,19 +259,8 @@ const qSub = 't-small mt-1 font-medium text-ink/70';
       void active.offsetWidth;
       active.classList.add('step-enter');
       stepNum.textContent = String(cur + 1);
+      if (stepLabel) stepLabel.textContent = stepNames[cur];
       dots.forEach((d, i) => { d.dataset.state = i === cur ? 'active' : i < cur ? 'done' : 'todo'; });
-
-      navItems.forEach((item, i) => {
-        const circle = item.querySelector('[data-nav-circle]');
-        const label = item.querySelector('[data-nav-label]');
-        const done = i < cur;
-        const isActive = i === cur;
-        circle.className =
-          'grid size-6 shrink-0 place-items-center rounded-full t-small font-bold ' +
-          (done || isActive ? 'bg-ink text-white' : 'border-2 border-ink/35 text-ink/60');
-        circle.innerHTML = done ? checkSvg : String(i + 1);
-        label.className = 't-body ' + (isActive ? 'font-bold' : done ? 'font-medium' : 'font-medium text-ink/60');
-      });
 
       backBtn.classList.toggle('invisible', cur === 0);
       const last = cur === total - 1;

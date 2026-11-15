@@ -1,94 +1,71 @@
 ---
 import { type Lang } from '../i18n/ui';
 import { useTranslations } from '../i18n/utils';
+import CaseMedia from './CaseMedia.astro';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-
-// band ground / ink and a contrasting tab colour, per project
-const looks = [
-  { band: 'bg-blue text-white', tab: 'bg-red text-ink' },
-  { band: 'bg-black text-white', tab: 'bg-blue text-white' },
-];
 ---
 
-<!-- Work filed as folders: a tab with the name, a flat band holding the real work.
-     Phone: bands stack in normal flow. Desktop: bands stick and pile up as you scroll. -->
-<section id="cases" class="scroll-mt-16 bg-white pt-16 md:scroll-mt-20 md:pt-24 lg:pt-32">
-  <div class="mx-auto max-w-[1440px] px-5 md:px-8">
-    <h2 data-reveal class="t-head text-ink">{t.cases.heading}</h2>
-  </div>
+<!-- Work: a two-column grid of rounded, framed previews; tags above the name, one sentence below.
+     On desktop a round "view" cursor follows the pointer over the pictures. -->
+<section id="cases" class="scroll-mt-20 px-3 pb-20 md:px-8 md:pb-32">
+  <div class="mx-auto max-w-[1440px]">
+    <div class="grid gap-5 px-1 lg:grid-cols-12 lg:items-end lg:gap-x-8">
+      <h2 data-reveal class="t-head text-ink lg:col-span-7">{t.cases.heading}</h2>
+      <p data-reveal style="--reveal-delay: 90ms" class="t-micro max-w-[34ch] text-ink/60 lg:col-span-3 lg:col-start-10 lg:pb-3 lg:text-right">{t.cases.lead}</p>
+    </div>
 
-  <div class="mt-10 lg:mt-14">
-    {t.cases.items.map((item, i) => {
-      const look = looks[i % looks.length];
-      return (
-        <article
-          class="lg:sticky"
-          style={`--stack: ${i}`}
-          data-case
-        >
-          <div class="mx-auto flex max-w-[1440px] items-end gap-1.5 px-5 md:px-8">
-            <h3 class:list={['folder-tab flex h-11 min-w-[180px] items-center pl-4 pr-10 text-[20px] font-extrabold tracking-[-0.02em] md:min-w-[260px] md:text-[26px]', look.tab]}>
-              {item.title}
-            </h3>
-          </div>
-          <div class:list={['lg:min-h-[78svh]', look.band]}>
-            <div class="mx-auto grid max-w-[1440px] gap-8 px-5 pb-12 pt-5 md:px-8 lg:grid-cols-12 lg:gap-x-8 lg:pb-16">
-              <p class="t-small font-semibold opacity-80 lg:col-span-12 lg:text-right">{item.category}</p>
-
-              <figure class="relative lg:col-span-7" data-reveal>
-                <div class="aspect-[4/3] overflow-hidden bg-paper lg:aspect-[16/10]">
-                  <img
-                    src={item.image}
-                    alt={item.imageAlt}
-                    loading="lazy"
-                    width="1440"
-                    height="900"
-                    class:list={['drift size-full', item.imageMobile ? 'object-cover object-left-top' : 'object-contain p-4']}
-                  />
-                </div>
-                {item.imageMobile && (
-                  <img
-                    src={item.imageMobile}
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                    width="390"
-                    height="844"
-                    class="absolute -bottom-6 right-3 w-[30%] max-w-[170px] rotate-[4deg] border-[5px] border-ink bg-white"
-                  />
-                )}
-              </figure>
-
-              <div class="flex flex-col gap-6 lg:col-span-4 lg:col-start-9" data-reveal style="--reveal-delay: 90ms">
-                <p class="t-lead font-medium">{item.text}</p>
-                {item.url && (
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener"
-                    class:list={['press flex h-14 w-full items-center justify-center gap-2 t-body font-semibold sm:w-fit sm:px-7', look.tab]}
-                  >
-                    {t.cases.visit} <span aria-hidden="true">↗</span>
-                  </a>
-                )}
-              </div>
+    <div class="mt-10 grid gap-x-3 gap-y-12 md:mt-14 md:grid-cols-2">
+      {t.cases.items.map((item, i) => {
+        const Tag = item.url ? 'a' : 'div';
+        const linkProps = item.url ? { href: item.url, target: '_blank', rel: 'noopener' } : {};
+        return (
+          <article data-case data-reveal style={`--reveal-delay: ${(i % 2) * 110}ms`} class="work-card group">
+            <Tag {...linkProps} data-view class="card block aspect-[4/3] overflow-hidden" tabindex={item.url ? -1 : undefined}>
+              <CaseMedia item={item} />
+            </Tag>
+            <div class="mt-5 flex flex-wrap items-center gap-2 px-1">
+              {item.category.split(' · ').map((tag) => (
+                <span class="t-micro rounded-full bg-white px-3 py-1.5 text-ink/70">{tag}</span>
+              ))}
             </div>
-          </div>
-        </article>
-      );
-    })}
+            <div class="mt-3 flex items-start justify-between gap-4 px-1">
+              <h3 class="text-[clamp(1.75rem,1.2rem+1.4vw,2.75rem)] font-medium leading-none tracking-[-0.04em] text-ink">{item.title}</h3>
+              {item.url && (
+                <a href={item.url} target="_blank" rel="noopener" class="pill shrink-0 bg-ink text-white hover:bg-blue">
+                  {t.cases.visit} <span aria-hidden="true">↗</span>
+                </a>
+              )}
+            </div>
+            <p class="t-body mt-3 max-w-[52ch] px-1 text-ink/65">{item.text}</p>
+          </article>
+        );
+      })}
+    </div>
   </div>
+  <span class="view-cursor" data-view-cursor aria-hidden="true">{t.cases.view}</span>
 </section>
 
-<style>
-  @media (min-width: 1024px) {
-    [data-case] {
-      top: calc(80px + var(--stack) * 56px);
-    }
+<script>
+  const cursor = document.querySelector<HTMLElement>('[data-view-cursor]');
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (cursor && fine) {
+    document.querySelectorAll<HTMLElement>('[data-view]').forEach((el) => {
+      el.style.cursor = 'none';
+      el.addEventListener('pointerenter', () => cursor.classList.add('is-on'));
+      el.addEventListener('pointerleave', () => cursor.classList.remove('is-on'));
+    });
+    window.addEventListener(
+      'pointermove',
+      (e) => {
+        cursor.style.setProperty('--x', `${e.clientX}px`);
+        cursor.style.setProperty('--y', `${e.clientY}px`);
+      },
+      { passive: true },
+    );
   }
-</style>
+</script>

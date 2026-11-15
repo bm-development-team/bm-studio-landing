@@ -10,50 +10,57 @@ const t = useTranslations(lang);
 const h = t.hero;
 ---
 
-<!-- Hero: poster headline, one sentence, one action, real work cropped by the bottom edge.
-     Phone first: headline → sentence → action → picture with the red figure block. -->
-<section class="overflow-hidden bg-paper">
-  <div class="mx-auto grid max-w-[1440px] px-5 pt-10 md:px-8 md:pt-14 lg:grid-cols-12 lg:gap-x-8 lg:pt-20">
-    <h1
-      aria-label={`${h.title} — BM Studio`}
-      class="t-display text-ink lg:col-span-8 lg:col-start-5 lg:row-start-1"
-    >
-      <span class="mask-line"><span>{h.lines[0]}</span></span>
-      <span class="mask-line"><span>{h.lines[1]}</span></span>
-    </h1>
+<!-- Hero: one sentence on the paper, then a big dark card with a live 3D pile.
+     Headline and the brief action sit inside the card, over the shapes. -->
+<section class="px-3 pb-6 pt-3 md:px-8 md:pt-6">
+  <div class="mx-auto max-w-[1440px]">
+    <p class="after-mask t-lead max-w-[30ch] px-1 font-medium text-ink md:max-w-[34ch]">{h.lead}</p>
 
-    <div class="after-mask mt-6 lg:col-span-4 lg:row-start-1 lg:mt-0 lg:self-end lg:pb-3">
-      <p class="t-lead max-w-[26ch] font-medium text-ink">{h.lead}</p>
-      <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-        <a href="#contact" class="press flex h-14 items-center justify-center bg-blue px-7 t-body font-semibold text-white hover:bg-blue-deep">
-          {h.cta}
-        </a>
-        <a href="#cases" class="group flex h-14 items-center justify-center gap-2 t-body font-semibold text-ink sm:justify-start">
-          {h.secondary}
-          <span class="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">→</span>
+    <div
+      data-hero-card
+      class="hero-card card relative mt-5 h-[calc(100svh-15rem)] min-h-[440px] overflow-hidden text-white md:mt-8 md:h-[calc(100svh-13rem)] md:min-h-[520px]"
+    >
+      <div class="pointer-events-none relative z-10 flex h-full flex-col justify-end gap-6 p-5 md:flex-row md:items-end md:justify-between md:p-10">
+        <h1 aria-label={`${h.title} — BM Studio`} class="t-display">
+          <span class="mask-line"><span>{h.lines[0]}</span></span>
+          <span class="mask-line" style="--d: 0.1s"><span>{h.lines[1]}</span></span>
+        </h1>
+        <a href="#contact" class="after-mask pill pill-lg pointer-events-auto w-full bg-white text-ink hover:bg-blue hover:text-white md:w-auto">
+          {h.cta} <span class="pill-dot" aria-hidden="true"></span>
         </a>
       </div>
     </div>
 
-    <!-- picture: full bleed on phones, right eight columns on desktop, cropped by the section edge -->
-    <div class="relative -mx-5 mt-14 md:-mx-8 lg:col-span-8 lg:col-start-5 lg:mx-0 lg:mt-16">
-      <div class="relative z-10 -mb-14 ml-5 w-[62%] max-w-[300px] bg-red p-5 text-ink md:ml-8 lg:-mb-16 lg:-ml-10 lg:w-[300px]" data-reveal>
-        <p class="t-head">{h.statFigure}</p>
-        <p class="t-body mt-2 font-medium">{h.statText}</p>
-      </div>
-      <div class="aspect-[4/3] overflow-hidden bg-white lg:aspect-auto lg:h-[min(52vh,520px)]">
-        <picture>
-          <source media="(min-width: 768px)" srcset="/assets/cases/reemax-desktop.jpg" />
-          <img
-            src="/assets/cases/reemax-mobile.jpg"
-            alt={h.imageAlt}
-            width="780"
-            height="1688"
-            fetchpriority="high"
-            class="drift size-full object-cover object-top md:object-left-top"
-          />
-        </picture>
-      </div>
+    <div class="mt-4 flex items-center justify-between px-1 text-ink/60" aria-hidden="true">
+      <span class="cross"></span>
+      <span class="cross hidden md:block"></span>
+      <span class="t-micro">{h.scroll}</span>
+      <span class="cross hidden md:block"></span>
+      <span class="cross"></span>
     </div>
   </div>
 </section>
+
+<script>
+  // load three.js only after first paint, and only if WebGL is there
+  const card = document.querySelector<HTMLElement>('[data-hero-card]');
+  const hasGL = (() => {
+    try {
+      const c = document.createElement('canvas');
+      return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    } catch {
+      return false;
+    }
+  })();
+  if (card && hasGL) {
+    const start = () =>
+      import('../scripts/hero3d')
+        .then(({ mountHero }) => mountHero(card))
+        .catch((err: unknown) => {
+          // the card still reads fine without the scene
+          card.dataset.heroError = err instanceof Error ? err.message : 'failed';
+        });
+    if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 1200 });
+    else setTimeout(start, 300);
+  }
+</script>

@@ -1,22 +1,28 @@
 ---
 /**
  * CSS-drawn phone whose screen changes per process step.
- * Screens are stacked; the one matching [data-active] on the root is shown.
+ * Screens are stacked; the `active` prop picks the one that is shown.
  * Order: 0 request, 1 briefing, 2 structure, 3 design, 4 development, 5 launch.
  */
+interface Props {
+  /** which stage screen to show (0–5) */
+  active?: number;
+}
+const { active = 0 } = Astro.props;
+
 const codeRows = [
-  ['#c792ea', 40, 0], ['#82aaff', 65, 1], ['#f2461b', 50, 2], ['#c3e88d', 70, 2],
+  ['#c792ea', 40, 0], ['#82aaff', 65, 1], ['#7c87ff', 50, 2], ['#c3e88d', 70, 2],
   ['#82aaff', 45, 1], ['#c792ea', 30, 0], ['#ffcb6b', 60, 1], ['#c3e88d', 55, 2],
   ['#82aaff', 35, 1], ['#c792ea', 25, 0],
 ] as const;
 ---
 
-<div class="pp relative h-[560px] w-[272px] rounded-[46px] border-[10px] border-[#111] bg-white" data-process-phone data-ui data-active="0" aria-hidden="true">
+<div class="pp relative h-[560px] w-[272px] rounded-[46px] border-[10px] border-[#111] bg-white" data-process-phone data-ui data-active={String(active)} aria-hidden="true">
   <span class="absolute left-1/2 top-2.5 z-10 h-[22px] w-[84px] -translate-x-1/2 rounded-full bg-[#111]"></span>
   <div class="absolute inset-0 overflow-hidden rounded-[36px]">
 
     <!-- 0: request — chat -->
-    <div class="pp-screen flex flex-col justify-end gap-3 bg-[#f6f6f8] p-5 pb-8">
+    <div class:list={["pp-screen flex flex-col gap-3 bg-[#f6f6f8] p-5 pt-14", { "is-active": active === 0 }]}>
       <span class="pp-in ml-auto h-10 w-3/4 rounded-[18px] rounded-br-[6px] bg-blue" style="--i: 0"></span>
       <span class="pp-in h-14 w-4/5 rounded-[18px] rounded-bl-[6px] bg-white" style="--i: 1"></span>
       <span class="pp-in ml-auto h-8 w-1/2 rounded-[18px] rounded-br-[6px] bg-blue" style="--i: 2"></span>
@@ -26,7 +32,7 @@ const codeRows = [
     </div>
 
     <!-- 1: briefing — checklist -->
-    <div class="pp-screen flex flex-col gap-3 p-5 pt-14">
+    <div class:list={["pp-screen flex flex-col gap-3 p-5 pt-14", { "is-active": active === 1 }]}>
       <span class="h-3 w-2/3 rounded-full bg-ink"></span>
       <span class="mb-2 h-2 w-1/2 rounded-full bg-[#e5e5e5]"></span>
       {[0, 1, 2, 3, 4].map((i) => (
@@ -40,17 +46,17 @@ const codeRows = [
     </div>
 
     <!-- 2: structure — wireframe -->
-    <div class="pp-screen flex flex-col gap-2.5 p-5 pt-14">
+    <div class:list={["pp-screen flex flex-col gap-2.5 p-5 pt-14", { "is-active": active === 2 }]}>
       {['h-8', 'h-28', 'h-5 w-3/4', 'h-16', 'h-16', 'h-10 w-1/2 mx-auto'].map((cls, i) => (
         <span class={`pp-in pp-wire rounded-[10px] ${cls}`} style={`--i: ${i}`}></span>
       ))}
     </div>
 
     <!-- 3: design — palette + type -->
-    <div class="pp-screen flex flex-col gap-4 p-5 pt-14">
-      <span class="pp-in bg-red h-32 rounded-[18px]" style="--i: 0"></span>
+    <div class:list={["pp-screen flex flex-col gap-4 p-5 pt-14", { "is-active": active === 3 }]}>
+      <span class="pp-in bg-blue h-32 rounded-[18px]" style="--i: 0"></span>
       <div class="pp-in flex gap-2" style="--i: 1">
-        {['#2033f7', '#f2461b', '#050a5c', '#0a0a0a', '#f3f3f3'].map((c) => (
+        {['#2033f7', '#7c87ff', '#050a5c', '#0a0a0a', '#f3f3f3'].map((c) => (
           <span class="size-9 rounded-full border border-[#eee]" style={`background: ${c}`}></span>
         ))}
       </div>
@@ -60,7 +66,7 @@ const codeRows = [
     </div>
 
     <!-- 4: development — editor -->
-    <div class="pp-screen flex flex-col gap-2.5 bg-[#1b1b1f] p-5 pt-14">
+    <div class:list={["pp-screen flex flex-col gap-2.5 bg-[#1b1b1f] p-5 pt-14", { "is-active": active === 4 }]}>
       {codeRows.map(([color, w, indent], i) => (
         <span class="flex items-center gap-2">
           <i class="w-4 text-right text-[9px] not-italic text-white/25">{i + 1}</i>
@@ -71,14 +77,14 @@ const codeRows = [
     </div>
 
     <!-- 5: launch -->
-    <div class="pp-screen flex flex-col items-center justify-center gap-5 p-6">
-      <span class="pp-launch bg-red grid size-24 place-items-center rounded-full text-white">
+    <div class:list={["pp-screen flex flex-col items-center justify-center gap-5 p-6", { "is-active": active === 5 }]}>
+      <span class="pp-launch bg-blue grid size-24 place-items-center rounded-full text-white">
         <svg class="size-11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
       </span>
       <span class="text-[34px] font-bold text-ink">100%</span>
-      <span class="h-1.5 w-full overflow-hidden rounded-full bg-[#eee]"><span class="pp-progress bg-red block h-full rounded-full"></span></span>
+      <span class="h-1.5 w-full overflow-hidden rounded-full bg-[#eee]"><span class="pp-progress bg-blue block h-full rounded-full"></span></span>
       {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-        <span class="pp-confetti absolute size-2 rounded-[2px]" style={`--i: ${i}; left: ${10 + i * 11}%; background: ${['#2033f7', '#f2461b', '#050a5c', '#0a0a0a'][i % 4]}`}></span>
+        <span class="pp-confetti absolute size-2 rounded-[2px]" style={`--i: ${i}; left: ${10 + i * 11}%; background: ${['#2033f7', '#7c87ff', '#050a5c', '#0a0a0a'][i % 4]}`}></span>
       ))}
     </div>
   </div>
