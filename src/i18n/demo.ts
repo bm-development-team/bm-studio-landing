@@ -38,8 +38,8 @@ export const demoCopy: Record<Lang, DemoCopy> = {
     web: { hero: 'Новый сайт', live: 'Live' },
     landing: { hero: 'Курс UX-дизайна', sub: 'Старт 1 декабря', price: '49 000 ₸', cta: 'Записаться', lead: '+1 заявка' },
     redesign: { before: 'Было', after: 'Стало', oldNav: 'Главная | О нас | Контакты', newHero: 'Свежий взгляд', start: 'Начать' },
-    seo: { query: 'веб-студия алматы', ours: 'bmstudio.kz', oursSub: 'Сайты и приложения', others: ['studio-one.kz', 'webpro.kz', 'design-lab.kz'] },
-    geo: { question: 'Какую студию выбрать для сайта?', answer: 'Посмотрите BM Studio — делают быстрые сайты и приложения в Алматы.', source: 'bmstudio.kz' },
+    seo: { query: 'студия сайтов казахстан', ours: 'bmstudio.kz', oursSub: 'Сайты и приложения', others: ['studio-one.kz', 'webpro.kz', 'design-lab.kz'] },
+    geo: { question: 'Какую студию выбрать для сайта?', answer: 'Посмотрите BM Studio — делают быстрые сайты и приложения, первый прототип за 2 недели.', source: 'bmstudio.kz' },
     audit: { rings: ['Скорость', 'SEO', 'UX'], checks: ['Сжаты картинки', 'Есть метатеги', 'Удобно с телефона'] },
     phone: {
       chat: ['Привет! Нужен сайт для кофейни', 'Здравствуйте! Расскажите о задаче — созвонимся сегодня?', 'Да, в 15:00 👍'],
@@ -64,8 +64,8 @@ export const demoCopy: Record<Lang, DemoCopy> = {
     web: { hero: 'New website', live: 'Live' },
     landing: { hero: 'UX design course', sub: 'Starts December 1', price: '$99', cta: 'Enroll', lead: '+1 lead' },
     redesign: { before: 'Before', after: 'After', oldNav: 'Home | About | Contact', newHero: 'Fresh look', start: 'Start' },
-    seo: { query: 'web studio almaty', ours: 'bmstudio.kz', oursSub: 'Websites & apps', others: ['studio-one.kz', 'webpro.kz', 'design-lab.kz'] },
-    geo: { question: 'Which studio should build my site?', answer: 'Try BM Studio — fast websites and apps from Almaty.', source: 'bmstudio.kz' },
+    seo: { query: 'web studio kazakhstan', ours: 'bmstudio.kz', oursSub: 'Websites & apps', others: ['studio-one.kz', 'webpro.kz', 'design-lab.kz'] },
+    geo: { question: 'Which studio should build my site?', answer: 'Try BM Studio — fast websites and apps, first prototype in 2 weeks.', source: 'bmstudio.kz' },
     audit: { rings: ['Speed', 'SEO', 'UX'], checks: ['Images compressed', 'Meta tags set', 'Mobile friendly'] },
     phone: {
       chat: ['Hi! We need a site for our coffee shop', 'Hello! Tell us about it — call today?', 'Yes, at 3 pm 👍'],
@@ -90,8 +90,8 @@ export const demoCopy: Record<Lang, DemoCopy> = {
     web: { hero: 'Жаңа сайт', live: 'Live' },
     landing: { hero: 'UX-дизайн курсы', sub: '1 желтоқсанда басталады', price: '49 000 ₸', cta: 'Жазылу', lead: '+1 өтінім' },
     redesign: { before: 'Бұрын', after: 'Қазір', oldNav: 'Басты | Біз туралы | Байланыс', newHero: 'Жаңа келбет', start: 'Бастау' },
-    seo: { query: 'веб-студия алматы', ours: 'bmstudio.kz', oursSub: 'Сайттар мен қосымшалар', others: ['studio-one.kz', 'webpro.kz', 'design-lab.kz'] },
-    geo: { question: 'Сайтқа қай студияны таңдау керек?', answer: 'BM Studio-ны қараңыз — Алматыда жылдам сайттар мен қосымшалар жасайды.', source: 'bmstudio.kz' },
+    seo: { query: 'сайт жасау студиясы', ours: 'bmstudio.kz', oursSub: 'Сайттар мен қосымшалар', others: ['studio-one.kz', 'webpro.kz', 'design-lab.kz'] },
+    geo: { question: 'Сайтқа қай студияны таңдау керек?', answer: 'BM Studio-ны қараңыз — жылдам сайттар мен қосымшалар, алғашқы прототип 2 аптада.', source: 'bmstudio.kz' },
     audit: { rings: ['Жылдамдық', 'SEO', 'UX'], checks: ['Суреттер сығылған', 'Метатегтер бар', 'Телефонға ыңғайлы'] },
     phone: {
       chat: ['Сәлем! Кофеханаға сайт керек', 'Сәлеметсіз бе! Міндетті айтып беріңіз — бүгін сөйлесейік пе?', 'Иә, 15:00-де 👍'],

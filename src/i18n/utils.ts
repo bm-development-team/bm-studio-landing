@@ -12,10 +12,14 @@ export function useTranslations(lang: Lang) {
   return ui[lang] ?? ui[defaultLang];
 }
 
-/** Build a localized path. Default locale has no prefix. */
+/**
+ * Build a localized path. Default locale has no prefix.
+ * Locale roots keep the trailing slash ("/kk/") — the same URL the sitemap and the static
+ * build serve, so canonical, hreflang and sitemap all point at one address.
+ */
 export function localizePath(path: string, lang: Lang): string {
   const clean = path.startsWith('/') ? path : `/${path}`;
-  return lang === defaultLang ? clean : `/${lang}${clean === '/' ? '' : clean}`;
+  return lang === defaultLang ? clean : `/${lang}${clean}`;
 }
 
 export const allLangs = Object.keys(languages) as Lang[];

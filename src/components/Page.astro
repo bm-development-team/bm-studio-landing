@@ -9,7 +9,9 @@ import Process from './Process.astro';
 import Contact from './Contact.astro';
 import Footer from './Footer.astro';
 import { type Lang } from '../i18n/ui';
-import { useTranslations } from '../i18n/utils';
+import { localizePath, useTranslations } from '../i18n/utils';
+import { buildJsonLd } from '../lib/seo';
+import Faq from './Faq.astro';
 
 interface Props {
   lang: Lang;
@@ -18,45 +20,8 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Organization',
-      '@id': `${siteUrl}/#organization`,
-      name: 'BM Studio',
-      url: `${siteUrl}/`,
-      logo: `${siteUrl}/apple-touch-icon.png`,
-      image: `${siteUrl}/og-default.png`,
-      description: t.meta.description,
-      email: t.contact.email,
-      telephone: t.contact.phone,
-      areaServed: 'KZ',
-      sameAs: [
-        'https://t.me/bmstudio',
-        'https://wa.me/77777262620',
-        'https://instagram.com/bmstudio',
-      ],
-      contactPoint: {
-        '@type': 'ContactPoint',
-        contactType: 'sales',
-        email: t.contact.email,
-        telephone: t.contact.phone,
-        areaServed: 'KZ',
-        availableLanguage: ['ru', 'kk', 'en'],
-      },
-    },
-    {
-      '@type': 'WebSite',
-      '@id': `${siteUrl}/#website`,
-      url: `${siteUrl}/`,
-      name: 'BM Studio',
-      description: t.meta.description,
-      inLanguage: lang,
-      publisher: { '@id': `${siteUrl}/#organization` },
-    },
-  ],
-};
+const pageUrl = new URL(localizePath('/', lang), Astro.site).toString();
+const jsonLd = buildJsonLd(t, lang, siteUrl, pageUrl);
 ---
 
 <Layout
@@ -73,6 +38,7 @@ const jsonLd = {
     <Services lang={lang} />
     <Cases lang={lang} />
     <Process lang={lang} />
+    <Faq lang={lang} />
     <Contact lang={lang} />
   </main>
   <Footer lang={lang} />

@@ -87,6 +87,7 @@ export interface Dictionary {
     prototype: string;
     steps: ProcessStep[];
   };
+  faq: { heading: string; lead: string; items: { q: string; a: string }[] };
   contact: {
     heading: string;
     description: string;
@@ -120,9 +121,9 @@ export interface Dictionary {
 export const ui: Record<Lang, Dictionary> = {
   ru: {
     meta: {
-      title: 'BM Studio — digital-студия для брендов',
+      title: 'BM Studio — разработка сайтов, приложений и UX/UI-дизайн в Казахстане',
       description:
-        'BM Studio создаёт сайты, айдентику и digital-интерфейсы, которые формируют первое впечатление, усиливают бренд и помогают бизнесу двигаться быстрее.',
+        'Digital-студия BM Studio: дизайн и разработка сайтов, лендингов и приложений, SEO и GEO-оптимизация. Первый прототип — через 2 недели.',
     },
     nav: { services: 'Услуги', cases: 'Работы', process: 'Процесс' },
     header: { cta: 'Обсудить проект' },
@@ -193,6 +194,18 @@ export const ui: Record<Lang, Dictionary> = {
         { title: 'Дизайн', description: 'Создаем визуальную концепцию, подбираем цвета, типографику, стиль и оформляем все экраны.', duration: '1–2 недели', points: ['Визуальная концепция', 'Все экраны и адаптив', 'Дизайн-система'] },
         { title: 'Разработка', description: 'Переносим дизайн в рабочий сайт, адаптируем под устройства, подключаем формы и базовые настройки.', duration: '2–4 недели', points: ['Вёрстка и анимации', 'Формы и интеграции', 'Все устройства'] },
         { title: 'Запуск', description: 'Проверяем сайт, исправляем детали и подготавливаем проект к публикации.', duration: '2–3 дня', points: ['Тестирование', 'Домен и хостинг', 'SEO-настройки'] },
+      ],
+    },
+    faq: {
+      heading: 'Вопросы и ответы',
+      lead: 'Коротко о сроках, услугах и том, как мы работаем.',
+      items: [
+        { q: 'Что делает BM Studio?', a: 'BM Studio — digital-студия. Делаем UX/UI-дизайн, сайты и лендинги, редизайн, мобильные приложения и айдентику, а также SEO, GEO и аудит сайтов.' },
+        { q: 'Как быстро будет первый прототип?', a: 'Через 2 недели после заявки. За это время проходим бриф, собираем структуру и показываем кликабельный прототип ключевых экранов.' },
+        { q: 'Сколько длится проект целиком?', a: 'Обычно 4–8 недель: бриф 2–3 дня, структура 3–5 дней, дизайн 1–2 недели, разработка 2–4 недели и запуск 2–3 дня. Точный срок называем после брифа.' },
+        { q: 'Что такое GEO и зачем оно нужно?', a: 'GEO (Generative Engine Optimization) — подготовка сайта к ChatGPT, Perplexity и поиску с ИИ: понятная структура, факты и разметка, чтобы нейросети находили, цитировали и рекомендовали именно вас.' },
+        { q: 'Сколько стоит сайт?', a: 'Зависит от объёма и сроков. Заполните короткий бриф — подготовим персональное предложение в течение одного рабочего дня.' },
+        { q: 'На каких языках вы работаете?', a: 'На русском, казахском и английском. Сайт тоже можно сделать сразу на нескольких языках.' },
       ],
     },
     contact: {
@@ -282,9 +295,9 @@ export const ui: Record<Lang, Dictionary> = {
 
   en: {
     meta: {
-      title: 'BM Studio — digital studio for brands',
+      title: 'BM Studio — websites, apps and UX/UI design in Kazakhstan',
       description:
-        'BM Studio builds websites, identity and digital interfaces that shape first impressions, strengthen the brand and help business move faster.',
+        'BM Studio is a digital studio: design and development of websites, landing pages and apps, plus SEO and GEO. First prototype in 2 weeks.',
     },
     nav: { services: 'Services', cases: 'Work', process: 'Process' },
     header: { cta: 'Start a project' },
@@ -355,6 +368,18 @@ export const ui: Record<Lang, Dictionary> = {
         { title: 'Design', description: 'We create the visual concept, pick colors, typography, style and design every screen.', duration: '1–2 weeks', points: ['Visual concept', 'All screens, responsive', 'Design system'] },
         { title: 'Development', description: 'We turn the design into a working site, adapt it to devices, connect forms and base settings.', duration: '2–4 weeks', points: ['Front-end and motion', 'Forms and integrations', 'Every device'] },
         { title: 'Launch', description: 'We test the site, fix the details and prepare the project for publication.', duration: '2–3 days', points: ['Testing', 'Domain and hosting', 'SEO setup'] },
+      ],
+    },
+    faq: {
+      heading: 'Questions and answers',
+      lead: 'The short version: timelines, services and how we work.',
+      items: [
+        { q: 'What does BM Studio do?', a: 'BM Studio is a digital studio. We do UX/UI design, websites and landing pages, redesigns, mobile apps and brand identity, plus SEO, GEO and website audits.' },
+        { q: 'How soon will I see a first prototype?', a: 'In 2 weeks from your request. In that time we run the brief, build the structure and show a clickable prototype of the key screens.' },
+        { q: 'How long does a whole project take?', a: 'Usually 4–8 weeks: brief 2–3 days, structure 3–5 days, design 1–2 weeks, development 2–4 weeks and launch 2–3 days. We give an exact timeline after the brief.' },
+        { q: 'What is GEO and why does it matter?', a: 'GEO (Generative Engine Optimization) prepares a site for ChatGPT, Perplexity and AI search: clear structure, facts and markup so AI assistants find, cite and recommend you.' },
+        { q: 'How much does a website cost?', a: 'It depends on scope and timeline. Fill in the short brief and we will send a tailored proposal within one business day.' },
+        { q: 'Which languages do you work in?', a: 'Russian, Kazakh and English. Your site can be multilingual from day one.' },
       ],
     },
     contact: {
@@ -444,9 +469,9 @@ export const ui: Record<Lang, Dictionary> = {
 
   kk: {
     meta: {
-      title: 'BM Studio — брендтерге арналған digital студия',
+      title: 'BM Studio — Қазақстанда сайттар, қосымшалар және UX/UI дизайн',
       description:
-        'BM Studio алғашқы әсерді қалыптастыратын, брендті күшейтетін және бизнеске жылдам жүруге көмектесетін сайттар, айдентика және digital интерфейстер жасайды.',
+        'BM Studio digital студиясы: сайттар, лендингтер мен қосымшалардың дизайны мен әзірлеуі, SEO және GEO. Алғашқы прототип — 2 аптада.',
     },
     nav: { services: 'Қызметтер', cases: 'Жұмыстар', process: 'Процесс' },
     header: { cta: 'Жобаны талқылау' },
@@ -517,6 +542,18 @@ export const ui: Record<Lang, Dictionary> = {
         { title: 'Дизайн', description: 'Визуалды концепция жасаймыз, түс, типографика, стиль таңдап, барлық экрандарды безендіреміз.', duration: '1–2 апта', points: ['Визуалды концепция', 'Барлық экрандар мен адаптив', 'Дизайн-жүйе'] },
         { title: 'Әзірлеу', description: 'Дизайнды жұмыс сайтына көшіреміз, құрылғыларға бейімдейміз, формалар мен негізгі баптауларды қосамыз.', duration: '2–4 апта', points: ['Беттеу мен анимация', 'Формалар мен интеграциялар', 'Барлық құрылғылар'] },
         { title: 'Іске қосу', description: 'Сайтты тексереміз, бөлшектерді түзетеміз және жобаны жариялауға дайындаймыз.', duration: '2–3 күн', points: ['Тестілеу', 'Домен мен хостинг', 'SEO баптаулары'] },
+      ],
+    },
+    faq: {
+      heading: 'Сұрақтар мен жауаптар',
+      lead: 'Мерзім, қызметтер және жұмыс тәсіліміз туралы қысқаша.',
+      items: [
+        { q: 'BM Studio не істейді?', a: 'BM Studio — digital студия. UX/UI дизайн, сайттар мен лендингтер, редизайн, мобильді қосымшалар мен айдентика, сондай-ақ SEO, GEO және сайт аудитін жасаймыз.' },
+        { q: 'Алғашқы прототип қашан дайын болады?', a: 'Өтінімнен кейін 2 аптада. Осы уақытта брифтен өтіп, құрылымды жинап, негізгі экрандардың басылатын прототипін көрсетеміз.' },
+        { q: 'Жоба толығымен қанша уақыт алады?', a: 'Әдетте 4–8 апта: бриф 2–3 күн, құрылым 3–5 күн, дизайн 1–2 апта, әзірлеу 2–4 апта және іске қосу 2–3 күн. Нақты мерзімді брифтен кейін айтамыз.' },
+        { q: 'GEO деген не және ол не үшін керек?', a: 'GEO (Generative Engine Optimization) — сайтты ChatGPT, Perplexity және ЖИ іздеуіне дайындау: нейрожелілер сізді тауып, дәйексөз келтіріп, ұсынуы үшін түсінікті құрылым, фактілер мен белгілеу.' },
+        { q: 'Сайт қанша тұрады?', a: 'Көлемі мен мерзіміне байланысты. Қысқа брифті толтырыңыз — бір жұмыс күні ішінде жеке ұсыныс дайындаймыз.' },
+        { q: 'Қай тілдерде жұмыс істейсіздер?', a: 'Орыс, қазақ және ағылшын тілдерінде. Сайтты бірден бірнеше тілде жасауға болады.' },
       ],
     },
     contact: {

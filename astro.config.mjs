@@ -24,5 +24,13 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  integrations: [sitemap()],
+  integrations: [
+    // hreflang alternates inside the sitemap too, so each language version is indexed as a set
+    sitemap({
+      i18n: {
+        defaultLocale: "ru",
+        locales: { ru: "ru-RU", en: "en-US", kk: "kk-KZ" },
+      },
+    }),
+  ],
 });
