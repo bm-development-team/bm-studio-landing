@@ -1,7 +1,7 @@
 ---
 import { type Lang } from '../i18n/ui';
 import { useTranslations } from '../i18n/utils';
-import ServiceDemo from './ServiceDemo.astro';
+import ServiceDemo, { type DemoTone } from './ServiceDemo.astro';
 
 interface Props {
   lang: Lang;
@@ -11,37 +11,43 @@ const t = useTranslations(lang);
 const count = t.services.items.length;
 const wide = (i: number) => count % 2 === 1 && i === count - 1;
 const pad = (n: number) => String(n).padStart(2, '0');
+// colour rhythm: web and GEO go ink, the audit goes orange, the rest stay white
+const tones: DemoTone[] = ['light', 'dark', 'light', 'light', 'light', 'dark', 'accent'];
+const tone = (i: number): DemoTone => tones[i] ?? 'light';
+const cardTone = { light: 'bg-white text-ink hover:bg-[#f8f8f6]', dark: 'bg-night text-white', accent: 'bg-accent text-white' };
 ---
 
-<!-- Services: four white cards, each with a number, a phrase, one sentence and a live demo. -->
+<!-- Services: cards in a white / ink / orange rhythm, each with a number, a phrase, one sentence and a live demo
+     that tilts toward the pointer and plays faster on hover. -->
 <section id="services" class="scroll-mt-20 px-3 pb-20 md:px-8 md:pb-32">
   <div class="mx-auto max-w-[1440px]">
-    <div class="flex items-end justify-between gap-6 px-1">
-      <h2 data-reveal class="t-head text-ink">{t.services.heading}</h2>
-      <span class="t-micro hidden pb-3 text-ink/55 md:block" aria-hidden="true">( {pad(count)} )</span>
+    <div class="grid gap-5 px-1 lg:grid-cols-12 lg:items-end lg:gap-x-8">
+      <h2 data-split class="t-head text-ink lg:col-span-7">{t.services.heading}</h2>
+      <p data-reveal style="--reveal-delay: 90ms" class="t-body max-w-[38ch] text-ink/60 lg:col-span-4 lg:col-start-9 lg:pb-2">{t.services.lead}</p>
     </div>
 
     <!-- phones: a swipe rail with snap; md+: a 2-column grid -->
-    <div class="no-scrollbar -mx-3 mt-10 flex snap-x snap-mandatory scroll-px-3 gap-3 overflow-x-auto px-3 md:mx-0 md:mt-14 md:grid md:grid-cols-2 md:overflow-visible md:px-0" data-services-rail>
+    <div class="no-scrollbar -mx-3 mt-10 flex snap-x snap-mandatory scroll-px-3 gap-3 overflow-x-auto px-3 md:mx-0 md:mt-14 md:grid md:grid-cols-2 md:overflow-visible md:px-0 lg:grid-cols-3" data-services-rail>
       {t.services.items.map((s, i) => (
         <article
           data-field
           data-reveal
           style={`--reveal-delay: ${(i % 2) * 90}ms`}
           class:list={[
-            'card group flex w-[86%] shrink-0 snap-start flex-col gap-8 bg-white p-5 transition-colors md:w-auto duration-500 hover:bg-[#f7f8fc] md:p-8',
+            'card group flex w-[86%] shrink-0 snap-start flex-col gap-5 p-5 transition-colors duration-500 md:w-auto md:p-6',
+            cardTone[tone(i)],
             // an odd last card spans the row: text left, demo right
-            wide(i) && 'md:col-span-2 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:gap-y-6',
+            wide(i) && 'md:col-span-2 lg:col-span-3 lg:grid lg:grid-cols-[1fr_2fr] lg:gap-x-8 lg:gap-y-4',
           ]}
         >
           <div class="flex items-start justify-between gap-6">
-            <h3 class="text-[clamp(1.75rem,1.2rem+1.6vw,2.75rem)] font-medium leading-[1.02] tracking-[-0.035em] text-ink">{s.phrase}</h3>
-            <span class="t-micro shrink-0 pt-2 text-ink/45">{pad(i + 1)}</span>
+            <h3 class="text-[clamp(1.5rem,1.2rem+0.9vw,2rem)] font-medium leading-[1.05] tracking-[-0.035em]">{s.phrase}</h3>
+            <span class="t-micro shrink-0 pt-2 opacity-50">{pad(i + 1)}</span>
           </div>
           <div class:list={[wide(i) && 'lg:col-start-2 lg:row-span-2 lg:row-start-1']}>
-            <ServiceDemo variant={i} />
+            <ServiceDemo variant={i} lang={lang} tone={tone(i)} />
           </div>
-          <p class:list={['t-body max-w-[44ch] text-ink/70', wide(i) && 'lg:self-end']}>{s.text}</p>
+          <p class:list={['t-small max-w-[44ch] opacity-75', wide(i) && 'lg:self-end']}>{s.text}</p>
         </article>
       ))}
     </div>
@@ -87,5 +93,30 @@ const pad = (n: number) => String(n).padStart(2, '0');
       { threshold: 0.35 },
     );
     fields.forEach((f) => io.observe(f));
+  })();
+
+  // pointer devices: the demo tilts toward the cursor and its loop runs 1.8x faster while hovered
+  (() => {
+    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const rate = (el, r) => el.getAnimations({ subtree: true }).forEach((a) => a.updatePlaybackRate(r));
+    document.querySelectorAll('[data-field]').forEach((card) => {
+      const demo = card.querySelector('[data-sd]');
+      if (!demo) return;
+      card.addEventListener('pointerenter', () => { demo.classList.add('is-hover'); rate(demo, 1.8); });
+      card.addEventListener('pointerleave', () => {
+        demo.classList.remove('is-hover');
+        demo.style.setProperty('--rx', '0deg');
+        demo.style.setProperty('--ry', '0deg');
+        rate(demo, 1);
+      });
+      card.addEventListener('pointermove', (e) => {
+        const r = demo.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        demo.style.setProperty('--rx', `${(x * 10).toFixed(2)}deg`);
+        demo.style.setProperty('--ry', `${(-y * 8).toFixed(2)}deg`);
+      });
+    });
   })();
 </script>

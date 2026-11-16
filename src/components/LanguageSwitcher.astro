@@ -35,7 +35,7 @@ const { lang, basePath = '/', label } = Astro.props;
           href={localizePath(basePath, code)}
           hreflang={code}
           class:list={[
-            'block px-4 py-2.5 t-small transition-colors hover:bg-blue',
+            'block px-4 py-2.5 t-small transition-colors hover:bg-accent',
             code === lang ? 'font-semibold text-white' : 'text-white/75',
           ]}
         >

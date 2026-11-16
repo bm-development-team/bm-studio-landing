@@ -5,29 +5,33 @@ test.describe('Home page — structure', () => {
     await page.goto('/');
   });
 
-  test('header: logo, nav, CTA', async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name.includes('mobile'), 'header nav/CTA hidden on mobile');
+  test('header: logo, CTA, menu with the sections', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name.includes('mobile'), 'header CTA hidden on mobile');
     const header = page.locator('header');
-    await expect(header.getByText('BM Studio')).toBeVisible();
+    await expect(header.getByText('BM Studio').first()).toBeVisible();
+    await expect(header.getByRole('link', { name: 'Обсудить проект' }).first()).toBeVisible();
+    // no inline nav links in the bar; the sections live in the menu sheet
+    await expect(header.locator('[data-menu]')).toBeHidden();
+    await header.locator('[data-menu-toggle]').click();
     for (const name of ['Услуги', 'Работы', 'Процесс']) {
-      await expect(header.getByRole('link', { name })).toBeVisible();
+      await expect(header.locator('[data-menu]').getByRole('link', { name })).toBeVisible();
     }
-    await expect(header.getByRole('link', { name: 'Обсудить проект' })).toBeVisible();
   });
 
-  test('hero: headline, one action, live 3D card', async ({ page }) => {
+  test('hero: one sentence above a text-free live 3D card', async ({ page }) => {
     const h1 = page.locator('main h1');
-    await expect(h1).toHaveAttribute('aria-label', /Звучите громче/);
-    await expect(page.getByRole('link', { name: 'Заполнить бриф' })).toBeVisible();
+    await expect(h1).toContainText('digital-студия');
+    // nothing is laid over the scene
+    await expect(page.locator('[data-hero-card] a, [data-hero-card] p, [data-hero-card] h1')).toHaveCount(0);
     // the scene mounts a canvas into the dark card once three.js loads
     await expect(page.locator('[data-hero-card] canvas')).toHaveCount(1, { timeout: 10_000 });
     await expect(page.locator('[data-hero-card]')).toHaveClass(/is-ready/);
   });
 
-  test('statement: big line, real work window, approach link', async ({ page }) => {
+  test('statement: big line, 2-week prototype offer card, approach link', async ({ page }) => {
     const section = page.locator('[data-statement]');
     await expect(section.getByRole('heading', { name: /Идеи, которые/ })).toBeAttached();
-    await expect(section.getByRole('img', { name: /REEMAX/ })).toBeVisible();
+    await expect(section.getByRole('link', { name: /Первый прототип/ })).toHaveAttribute('href', '#process');
     await expect(section.getByRole('link', { name: 'Наш подход' })).toHaveAttribute('href', '#process');
   });
 
@@ -56,13 +60,15 @@ test.describe('Home page — structure', () => {
     await expect(section.getByRole('link', { name: /Открыть сайт/ })).toHaveAttribute('rel', 'noopener');
   });
 
-  test('process: heading, 6 steps, first active, sticky panel with phone', async ({ page }) => {
+  test('process: heading, 6 steps, first active, sticky panel with per-step scenes', async ({ page }) => {
     const section = page.locator('#process');
     await expect(section.getByRole('heading', { name: 'Как мы работаем' })).toBeVisible();
     await expect(section.locator('[data-stage]')).toHaveCount(6);
     await expect(section.locator('[data-stage="0"]')).toHaveClass(/is-active/);
-    await expect(section.locator('[data-process-phone]')).toHaveCount(1);
+    await expect(section.locator('[data-process-scenes]')).toHaveCount(1);
     await expect(section.getByRole('heading', { name: 'Запуск' })).toBeVisible();
+    // the offer: first prototype in two weeks
+    await expect(section.getByText(/Первый прототип — уже через 2 недели/)).toBeVisible();
   });
 
   test('contact: brief card present', async ({ page }) => {
@@ -101,10 +107,12 @@ test.describe('Mobile menu', () => {
     await expect(menu).toBeHidden();
   });
 
-  test('hamburger hidden on desktop', async ({ page }, testInfo) => {
+  test('menu button is the only section nav on desktop too', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name.includes('mobile'), 'desktop-only check');
     await page.goto('/');
-    await expect(page.locator('[data-menu-toggle]')).toBeHidden();
+    await expect(page.locator('[data-menu-toggle]')).toBeVisible();
+    // the bar itself carries no section links
+    await expect(page.locator('header > div:not([data-menu]) a[href="#services"]')).toHaveCount(0);
   });
 
   test('header CTA pill hidden on phones (pill must not beat `hidden`)', async ({ page }, testInfo) => {

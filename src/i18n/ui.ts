@@ -68,10 +68,25 @@ export interface Dictionary {
     /** hint under the hero card */
     scroll: string;
   };
-  statement: { lines: [string, string]; text: string; cta: string };
-  services: { heading: string; items: Service[] };
+  statement: {
+    lines: [string, string];
+    text: string;
+    cta: string;
+    /** the offer card next to the statement */
+    stat: { label: string; value: string; text: string };
+  };
+  services: { heading: string; lead: string; items: Service[] };
   cases: { heading: string; lead: string; visit: string; view: string; items: CaseItem[] };
-  process: { heading: string; lead: string; stepWord: string; steps: ProcessStep[] };
+  process: {
+    heading: string;
+    lead: string;
+    stepWord: string;
+    /** headline offer shown on the desktop panel */
+    offer: string;
+    /** label of the milestone after the structure step */
+    prototype: string;
+    steps: ProcessStep[];
+  };
   contact: {
     heading: string;
     description: string;
@@ -126,9 +141,11 @@ export const ui: Record<Lang, Dictionary> = {
       lines: ['Идеи, которые', 'замечают'],
       text: 'Соединяем дизайн, движение и разработку, чтобы сайт не просто работал, а запоминался. От лендинга под запуск до приложения — делаем так, чтобы о вас говорили.',
       cta: 'Наш подход',
+      stat: { label: 'Первый прототип', value: '2 нед', text: 'от заявки до кликабельного прототипа' },
     },
     services: {
       heading: 'Что мы делаем',
+      lead: 'Семь направлений — от первого экрана до ответов нейросетей. Можно взять одно или всё вместе.',
       items: [
         { phrase: 'Удобные интерфейсы', text: 'UX/UI-дизайн: проектируем экраны, где каждый шаг понятен — от первого касания до финальной кнопки.' },
         { phrase: 'Сайты на вырост', text: 'Разработка сайтов: быстрые, адаптивные, аккуратно собранные. Запускаем и закладываем фундамент для роста.' },
@@ -165,8 +182,10 @@ export const ui: Record<Lang, Dictionary> = {
     },
     process: {
       heading: 'Как мы работаем',
-      lead: 'Шесть шагов от заявки до запуска. На каждом вы видите, что происходит, и согласуете результат.',
+      lead: 'Шесть шагов от заявки до запуска. Первый прототип — уже через 2 недели, на каждом шаге вы согласуете результат.',
       stepWord: 'Шаг',
+      offer: 'Первый прототип — через 2 недели',
+      prototype: 'Прототип · 2 нед',
       steps: [
         { title: 'Заявка', description: 'Вы оставляете заявку или пишете нам напрямую. Мы уточняем задачу, формат проекта и ваши цели.', duration: '1 день', points: ['Созвон 15 минут', 'Понимаем задачу', 'Предварительная оценка'] },
         { title: 'Брифинг', description: 'Разбираем бизнес, аудиторию, конкурентов, стиль и функционал, который нужен проекту.', duration: '2–3 дня', points: ['Аудит конкурентов', 'Цели и аудитория', 'Техническое задание'] },
@@ -284,9 +303,11 @@ export const ui: Record<Lang, Dictionary> = {
       lines: ['Ideas people', 'notice'],
       text: 'We combine design, motion and development so a site does more than work — it sticks. From a launch landing page to an app, we make you worth talking about.',
       cta: 'Our approach',
+      stat: { label: 'First prototype', value: '2 wks', text: 'from request to a clickable prototype' },
     },
     services: {
       heading: 'What we do',
+      lead: 'Seven services — from the first screen to answers in AI search. Take one or all of them together.',
       items: [
         { phrase: 'Frictionless interfaces', text: 'UX/UI design: screens where every step makes sense, from the first tap to the final button.' },
         { phrase: 'Sites built to grow', text: 'Web development: fast, responsive, neatly built websites, launched with a foundation for growth.' },
@@ -323,8 +344,10 @@ export const ui: Record<Lang, Dictionary> = {
     },
     process: {
       heading: 'How we work',
-      lead: 'Six steps from request to launch. At each one you see what is happening and approve the result.',
+      lead: 'Six steps from request to launch. The first prototype is ready in 2 weeks, and you approve the result at every step.',
       stepWord: 'Step',
+      offer: 'First prototype in 2 weeks',
+      prototype: 'Prototype · 2 wks',
       steps: [
         { title: 'Request', description: 'You leave a request or message us directly. We clarify the task, project format and your goals.', duration: '1 day', points: ['15-minute call', 'We get the task', 'Rough estimate'] },
         { title: 'Briefing', description: 'We study the business, audience, competitors, style and the functionality the project needs.', duration: '2–3 days', points: ['Competitor audit', 'Goals and audience', 'Technical brief'] },
@@ -442,9 +465,11 @@ export const ui: Record<Lang, Dictionary> = {
       lines: ['Байқалатын', 'идеялар'],
       text: 'Дизайнды, қозғалысты және әзірлеуді біріктіреміз — сайт жай жұмыс істеп қана қоймай, есте қалсын. Іске қосуға арналған лендингтен қосымшаға дейін — сіз туралы айтатындай етеміз.',
       cta: 'Біздің тәсіл',
+      stat: { label: 'Алғашқы прототип', value: '2 апта', text: 'өтінімнен басылатын прототипке дейін' },
     },
     services: {
       heading: 'Не істейміз',
+      lead: 'Жеті бағыт — бірінші экраннан нейрожелі жауаптарына дейін. Біреуін немесе бәрін бірге алуға болады.',
       items: [
         { phrase: 'Ыңғайлы интерфейс', text: 'UX/UI дизайн: алғашқы түртуден соңғы батырмаға дейін әр қадамы түсінікті экрандар жобалаймыз.' },
         { phrase: 'Өсуге дайын сайттар', text: 'Сайт әзірлеу: жылдам, бейімделгіш, ұқыпты жиналған сайттар. Іске қосамыз және өсуге негіз қалаймыз.' },
@@ -481,8 +506,10 @@ export const ui: Record<Lang, Dictionary> = {
     },
     process: {
       heading: 'Қалай жұмыс істейміз',
-      lead: 'Өтінімнен іске қосуға дейін алты қадам. Әр қадамда не болып жатқанын көріп, нәтижені келісесіз.',
+      lead: 'Өтінімнен іске қосуға дейін алты қадам. Алғашқы прототип — 2 аптада, әр қадамда нәтижені келісесіз.',
       stepWord: 'Қадам',
+      offer: 'Алғашқы прототип — 2 аптада',
+      prototype: 'Прототип · 2 апта',
       steps: [
         { title: 'Өтінім', description: 'Сіз өтінім қалдырасыз немесе бізге тікелей жазасыз. Біз тапсырманы, жоба форматы мен мақсаттарыңызды нақтылаймыз.', duration: '1 күн', points: ['15 минуттық қоңырау', 'Міндетті түсінеміз', 'Алдын ала бағалау'] },
         { title: 'Брифинг', description: 'Бизнесті, аудиторияны, бәсекелестерді, стиль мен жобаға қажет функционалды талдаймыз.', duration: '2–3 күн', points: ['Бәсекелестер аудиті', 'Мақсат пен аудитория', 'Техникалық тапсырма'] },

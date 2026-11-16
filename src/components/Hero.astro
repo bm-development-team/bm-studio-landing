@@ -10,31 +10,25 @@ const t = useTranslations(lang);
 const h = t.hero;
 ---
 
-<!-- Hero: one sentence on the paper, then a big dark card with a live 3D pile.
-     Headline and the brief action sit inside the card, over the shapes. -->
-<section class="px-3 pb-6 pt-3 md:px-8 md:pt-6">
+<!-- Hero, Lusion-style: one sentence on the paper, then a card that is only the 3D scene,
+     and a quiet row of crosses with the scroll hint under it. No text over the shapes. -->
+<section class="px-3 pb-6 pt-4 md:px-8 md:pt-0">
   <div class="mx-auto max-w-[1440px]">
-    <p class="after-mask t-lead max-w-[30ch] px-1 font-medium text-ink md:max-w-[34ch]">{h.lead}</p>
+    <div class="grid px-1 lg:grid-cols-12 lg:gap-x-8">
+      <h1 class="after-mask max-w-[30ch] text-[clamp(1.5rem,1.1rem+1.25vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.035em] text-ink md:-mt-[52px] md:max-w-[min(30ch,56vw)] lg:col-span-6 lg:col-start-4 lg:-mt-[54px]">
+        {h.lead}
+      </h1>
+    </div>
 
     <div
       data-hero-card
-      class="hero-card card relative mt-5 h-[calc(100svh-15rem)] min-h-[440px] overflow-hidden text-white md:mt-8 md:h-[calc(100svh-13rem)] md:min-h-[520px]"
-    >
-      <div class="pointer-events-none relative z-10 flex h-full flex-col justify-end gap-6 p-5 md:flex-row md:items-end md:justify-between md:p-10">
-        <h1 aria-label={`${h.title} — BM Studio`} class="t-display">
-          <span class="mask-line"><span>{h.lines[0]}</span></span>
-          <span class="mask-line" style="--d: 0.1s"><span>{h.lines[1]}</span></span>
-        </h1>
-        <a href="#contact" class="after-mask pill pill-lg pointer-events-auto w-full bg-white text-ink hover:bg-blue hover:text-white md:w-auto">
-          {h.cta} <span class="pill-dot" aria-hidden="true"></span>
-        </a>
-      </div>
-    </div>
+      class="hero-card card relative mt-6 h-[calc(100svh-17rem)] min-h-[380px] overflow-hidden md:mt-8 md:h-[calc(100svh-15.5rem)] md:min-h-[440px]"
+    ></div>
 
-    <div class="mt-4 flex items-center justify-between px-1 text-ink/60" aria-hidden="true">
+    <div class="mt-4 flex items-center justify-between px-1 text-ink" aria-hidden="true">
       <span class="cross"></span>
       <span class="cross hidden md:block"></span>
-      <span class="t-micro">{h.scroll}</span>
+      <span class="hero-scroll t-micro flex items-center gap-2">{h.scroll}</span>
       <span class="cross hidden md:block"></span>
       <span class="cross"></span>
     </div>

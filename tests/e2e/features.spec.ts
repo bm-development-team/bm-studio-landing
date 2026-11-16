@@ -64,7 +64,7 @@ test.describe('Process — sticky panel follows the steps', () => {
     await expect(page.locator('[data-stage="3"]')).toHaveClass(/is-active/);
     await expect(page.locator('[data-stage="0"]')).not.toHaveClass(/is-active/);
     await expect(page.locator('[data-panel-num]')).toHaveText('04');
-    await expect(page.locator('[data-process-phone]')).toHaveAttribute('data-active', '3');
+    await expect(page.locator('[data-process-scenes]')).toHaveAttribute('data-active', '3');
     const panel = await page.locator('[data-process-panel]').boundingBox();
     expect(panel && panel.y).toBeGreaterThanOrEqual(0);
     await centre(5);
@@ -82,6 +82,26 @@ test.describe('Mobile — swipe services and step accordion', () => {
     expect(sw).toBeGreaterThan(cw * 3);
     await rail.evaluate((el: HTMLElement) => el.scrollTo({ left: el.scrollWidth, behavior: 'instant' }));
     await expect(page.locator('[data-services-count]')).toHaveText('07 / 07');
+  });
+
+  test('process timeline fills and marks passed steps while scrolling', async ({ page }, testInfo) => {
+    test.skip(!testInfo.project.name.includes('mobile'), 'mobile-only behaviour');
+    await page.goto('/');
+    await page.locator('[data-stage="3"]').evaluate((el: HTMLElement) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    await expect(page.locator('[data-stage="2"]')).toHaveClass(/is-passed/);
+    await expect(page.locator('[data-stage="5"]')).not.toHaveClass(/is-passed/);
+    const h = await page.locator('[data-process-line]').evaluate((el: HTMLElement) => parseFloat(el.style.height));
+    expect(h).toBeGreaterThan(20);
+  });
+
+  test('section headings split into words and keep their accessible name', async ({ page }, testInfo) => {
+    test.skip(!testInfo.project.name.includes('mobile'), 'once is enough');
+    await page.goto('/');
+    const h = page.locator('#cases h2');
+    await expect(h).toHaveAttribute('aria-label', 'Наши работы');
+    await expect(h.locator('.split-mask')).toHaveCount(2);
+    await h.scrollIntoViewIfNeeded();
+    await expect(h).toHaveClass(/is-in/);
   });
 
   test('process steps open one at a time', async ({ page }, testInfo) => {

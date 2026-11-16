@@ -1,5 +1,6 @@
 /**
- * Hero scene: a soft pile of glossy pills, rounded bricks and rings in brand colours.
+ * Hero scene: a soft pile of glossy pills, rounded bricks, rings and the letters B and M in brand colours.
+ * The letters wobble when pushed but settle back upright so they stay readable.
  * Bodies are pulled toward the centre, push each other apart and scatter away from the pointer.
  * Tiny hand-rolled physics (spheres + springs) — no physics engine, ~40 bodies.
  */
@@ -9,6 +10,7 @@ import {
   DirectionalLight,
   type BufferGeometry,
   InstancedMesh,
+  Mesh,
   Matrix4,
   MeshPhysicalMaterial,
   NeutralToneMapping,
@@ -23,6 +25,9 @@ import {
 } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
+import { Font, type FontData } from 'three/examples/jsm/loaders/FontLoader.js';
+import { bmGlyphs } from './bm-glyphs';
 
 interface Body {
   pos: Vector3;
@@ -32,18 +37,35 @@ interface Body {
   radius: number;
   mesh: number;
   slot: number;
+  /** letters are plain meshes that keep a readable, upright pose */
+  letter?: { obj: Mesh; rest: Quaternion };
 }
 
 const PALETTE = {
-  blue: { color: '#2033f7', roughness: 0.38, clearcoat: 0.4 },
-  white: { color: '#eceef6', roughness: 0.55, clearcoat: 0.2 },
-  black: { color: '#08080d', roughness: 0.16, clearcoat: 1 },
+  orange: { color: '#ff4f12', roughness: 0.38, clearcoat: 0.4 },
+  white: { color: '#f2f2f0', roughness: 0.55, clearcoat: 0.2 },
+  black: { color: '#0a0a0a', roughness: 0.16, clearcoat: 1 },
 } as const;
 
 const PULL = 1.6;
 const DAMPING = 0.9;
 const POINTER_RADIUS = 2.6;
 const POINTER_FORCE = 70;
+
+function makeLetter(font: Font, char: string): BufferGeometry {
+  const geo = new TextGeometry(char, {
+    font,
+    size: 1.45,
+    depth: 0.5,
+    curveSegments: 10,
+    bevelEnabled: true,
+    bevelThickness: 0.14,
+    bevelSize: 0.08,
+    bevelSegments: 6,
+  });
+  geo.center();
+  return geo;
+}
 
 function makeGeometries(): { geo: BufferGeometry; radius: number }[] {
   return [
@@ -99,7 +121,7 @@ export function mountHero(card: HTMLElement): () => void {
     }),
   );
 
-  // mostly blue and black, fewer white — reads as brand, not confetti
+  // mostly orange and black, fewer white — reads as brand, not confetti
   const toneWeights = [0.45, 0.22, 0.33];
   const pickTone = (): number => {
     const r = Math.random();
@@ -125,9 +147,34 @@ export function mountHero(card: HTMLElement): () => void {
     });
   }
 
+  // the studio's initials join the pile: B and M, one pair on phones, two on larger screens
+  const font = new Font(bmGlyphs as unknown as FontData);
+  const letterGeos = { B: makeLetter(font, 'B'), M: makeLetter(font, 'M') };
+  const letterMats = tones.map(
+    (tone) => new MeshPhysicalMaterial({ color: new Color(tone.color), roughness: tone.roughness, clearcoat: tone.clearcoat, clearcoatRoughness: 0.2 }),
+  );
+  const letters: { char: 'B' | 'M'; tone: number }[] = small
+    ? [{ char: 'B', tone: 0 }, { char: 'M', tone: 1 }]
+    : [{ char: 'B', tone: 0 }, { char: 'M', tone: 1 }, { char: 'B', tone: 2 }, { char: 'M', tone: 0 }];
+  letters.forEach(({ char, tone }) => {
+    const obj = new Mesh(letterGeos[char], letterMats[tone]);
+    scene.add(obj);
+    // a slight, fixed tilt so the letters feel tossed into the pile, not typeset
+    const rest = new Quaternion().setFromAxisAngle(new Vector3(Math.random() - 0.5, Math.random() - 0.5, 0.6).normalize(), (Math.random() - 0.5) * 0.7);
+    bodies.push({
+      pos: new Vector3(0, 0, 1.2),
+      vel: new Vector3(),
+      rot: rest.clone(),
+      spin: new Vector3(),
+      radius: 1.15,
+      mesh: -1,
+      slot: -1,
+      letter: { obj, rest },
+    });
+  });
+
   // cluster shape follows the card: wider than tall on desktop, tall on phones
   const spread = new Vector3(1, 1, 1);
-  // the headline lives bottom-left, so the pile leans right on desktop and up on phones
   const centre = new Vector3();
   const pointer = new Vector3(999, 999, 0);
   let pointerActive = false;
@@ -137,12 +184,14 @@ export function mountHero(card: HTMLElement): () => void {
     if (!width || !height) return;
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
+    // pull back on tall (phone) cards so the pile fits the narrow width
+    // close in on wide cards so the pile fills them (no text to keep clear); pull back on tall phone cards
+    camera.position.z = camera.aspect < 1 ? 17 : 15;
     camera.updateProjectionMatrix();
     const halfH = Math.tan((camera.fov * Math.PI) / 360) * camera.position.z;
-    spread.set(Math.max(0.7, camera.aspect * 0.8) * halfH * 0.16, halfH * 0.16, 1);
-    const halfW = halfH * camera.aspect;
-    if (camera.aspect >= 1) centre.set(halfW * 0.18, halfH * 0.08, 0);
-    else centre.set(0, halfH * 0.22, 0);
+    spread.set(Math.max(0.7, camera.aspect * 0.9) * halfH * 0.2, halfH * 0.2, 1);
+    // the card holds no text any more, so the pile sits in the middle
+    centre.set(0, 0, 0);
   };
   const ro = new ResizeObserver(resize);
   ro.observe(card);
@@ -221,6 +270,18 @@ export function mountHero(card: HTMLElement): () => void {
     for (const b of bodies) {
       b.vel.multiplyScalar(damp);
       b.pos.addScaledVector(b.vel, dt);
+      if (b.letter) {
+        // wobble from pushes, then ease back to the readable pose
+        b.spin.multiplyScalar(0.92);
+        if (b.spin.lengthSq() > 1e-6) {
+          dq.setFromAxisAngle(tmp.copy(b.spin).normalize(), b.spin.length() * dt);
+          b.rot.premultiply(dq);
+        }
+        b.rot.slerp(b.letter.rest, Math.min(1, dt * 2.2));
+        // letters sit a little in front so they are not buried in the pile
+        b.vel.z += (1.6 - b.pos.z) * dt * 2;
+        continue;
+      }
       b.spin.multiplyScalar(0.985).clampLength(0.15, 4);
       dq.setFromAxisAngle(tmp.copy(b.spin).normalize(), b.spin.length() * dt);
       b.rot.premultiply(dq);
@@ -229,6 +290,11 @@ export function mountHero(card: HTMLElement): () => void {
 
   const write = (): void => {
     for (const b of bodies) {
+      if (b.letter) {
+        b.letter.obj.position.copy(b.pos);
+        b.letter.obj.quaternion.copy(b.rot);
+        continue;
+      }
       m4.compose(b.pos, b.rot, one);
       meshes[b.mesh].setMatrixAt(b.slot, m4);
     }
